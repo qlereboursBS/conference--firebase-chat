@@ -58,6 +58,7 @@ export const PageRegister = () => {
         formValues.password
       );
       const user = userCredential.user;
+      console.log(user);
       setIsSuccess(true);
     } catch (error) {
       const firebaseError = error as AuthEventError;
@@ -70,13 +71,7 @@ export const PageRegister = () => {
         description: firebaseError.message,
       });
 
-      if (errorCode === 'userexists') {
-        form.invalidateFields({
-          login: t('account:data.login.alreadyUsed'),
-        });
-      }
-
-      if (errorCode === 'emailexists') {
+      if (errorCode === 'auth/email-already-in-use') {
         form.invalidateFields({ email: t('account:data.email.alreadyUsed') });
       }
     } finally {

@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC } from 'react';
 
 import { ChakraProvider } from '@chakra-ui/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -6,35 +6,17 @@ import { useTranslation } from 'react-i18next';
 
 import { AuthProvider } from '@/app/auth/AuthContext';
 import '@/config';
+import '@/constants/firebase';
 import theme from '@/theme';
 
 import { AVAILABLE_LANGUAGES } from './constants/i18n';
 
 const queryClient = new QueryClient();
 
-const useMocksServer = () => {
-  const [isLoadingMocks, setIsLoadingMocks] = useState(
-    !process.env.NEXT_PUBLIC_API_BASE_URL
-  );
-
-  useEffect(() => {
-    (async () => {
-      if (!process.env.NEXT_PUBLIC_API_BASE_URL) {
-        const { mockServer } = await import('@/mocks/server');
-        mockServer();
-        setIsLoadingMocks(false);
-      }
-    })();
-  }, []);
-
-  return { isLoadingMocks };
-};
-
 export const Providers: FC<React.PropsWithChildren<unknown>> = ({
   children,
 }) => {
   const { i18n } = useTranslation();
-  const { isLoadingMocks } = useMocksServer();
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -47,7 +29,7 @@ export const Providers: FC<React.PropsWithChildren<unknown>> = ({
                 ?.dir ?? 'ltr',
           }}
         >
-          {!isLoadingMocks && children}
+          {children}
         </ChakraProvider>
       </AuthProvider>
     </QueryClientProvider>

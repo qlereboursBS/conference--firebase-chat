@@ -5,7 +5,8 @@
 3. Show Firebase menus and features around 
 4. Create the Database (before saving the configuration!)
 5. Add firebase configuration json in constants/firebase.ts, don't forget to add `!getApps().length`
-6. Go to the PageRegister.tsx page, delete the useCreateAccount hook and create a createAccount function
+6. Import the configuration in `Providers.tsx`
+7. Go to the PageRegister.tsx page, delete the useCreateAccount hook and create a createAccount function
 
 
 

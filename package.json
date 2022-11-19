@@ -13,8 +13,8 @@
     "postinstall": "yarn build:info && yarn theme:generate-typing",
     "test": "cypress open",
     "test:ci": "cypress run --component",
-    "dev": "yarn docs:build && next dev",
-    "build": "yarn build:info && yarn docs:build && next build",
+    "dev": "next dev",
+    "build": "yarn build:info && next build",
     "build:info": "node .build-info.generate.js",
     "start": "next start",
     "pretty": "prettier -w .",
@@ -25,8 +25,7 @@
     "static:build": "yarn build && next export",
     "static:serve": "yarn static:build && npx servor out app.html 5000",
     "theme:generate-typing": "chakra-cli tokens ./src/theme/theme.ts",
-    "theme:generate-icons": "svgr --config-file src/components/Icons/svgr.config.js src/components/Icons/svg-sources",
-    "docs:build": "swagger-cli bundle src/mocks/openapi/openapi.yaml -t json --outfile public/open-api.json"
+    "theme:generate-icons": "svgr --config-file src/components/Icons/svgr.config.js src/components/Icons/svg-sources"
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx,json}": "prettier --write",
@@ -103,7 +102,6 @@
     "eslint-plugin-react-hooks": "4.6.0",
     "husky": "8.0.1",
     "lint-staged": "13.0.3",
-    "miragejs": "0.1.45",
     "prettier": "2.7.1",
     "react-is": "18.2.0",
     "storybook-dark-mode": "1.1.0",
