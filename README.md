@@ -1,3 +1,14 @@
+## Conference steps
+
+1. Generate a Firebase project
+2. In the same time, generate a StartUI project
+3. Show Firebase menus and features around 
+4. Create the Database (before saving the configuration!)
+5. Add firebase configuration json in constants/firebase.ts, don't forget to add `!getApps().length`
+6. Go to the PageRegister.tsx page, delete the useCreateAccount hook and create a createAccount function
+
+
+
 <h1 align="center"><img src="assets/start-ui-web.svg" alt="Start UI Web" width="300" /></h1>
 
 [![Discord](https://img.shields.io/discord/452798408491663361)](https://go.bearstudio.fr/discord)

@@ -1,63 +1,82 @@
-import React from 'react';
+import React, { useCallback, useRef } from 'react';
 
-import {
-  Alert,
-  AlertDescription,
-  AlertIcon,
-  AlertTitle,
-  Box,
-  Button,
-  ButtonGroup,
-  Heading,
-  Text,
-} from '@chakra-ui/react';
-import { Trans, useTranslation } from 'react-i18next';
-import { FaGithub } from 'react-icons/fa';
-import { FiAlertCircle } from 'react-icons/fi';
+import { Divider, Heading, Stack } from '@chakra-ui/react';
+import { useTranslation } from 'react-i18next';
+import { Virtuoso, VirtuosoHandle } from 'react-virtuoso';
 
 import { Page, PageContent } from '@/app/layout';
-import { Icon } from '@/components/Icons';
+import { Message } from '@/components/Message';
+
+const NB_ELEMENTS_BY_PAGE = 10;
+
+export type MessageType = {
+  content: string;
+  author: string;
+};
 
 export const PageDashboard = () => {
   const { t } = useTranslation();
+  const scrollbarRef = useRef<VirtuosoHandle>(null);
+  const firstItemIndex = 10;
+
+  const messages = [
+    {
+      content: 'Hello world!',
+      author: 'Quentin Lerebours',
+    },
+    {
+      content: 'Hello Quentin!',
+      author: 'Zhaniya',
+    },
+  ];
+
+  const prependItems = useCallback(async () => {
+    // // Si pas de data à charger on ne fetch pas
+    // if (!hasNextPage) {
+    //   return;
+    // }
+    //
+    // const query = await fetchNextPage();
+    // // On récupère le nombre d'éléments présent sur cette nouvelle page (la dernière de la query)
+    // const indexDelta = query.data.pages.at(-1).content.length;
+    // // On décalle l'index du nombre de nouveaux items
+    // setFirstItemIndex(firstItemIndex - indexDelta);
+    //
+    // return false;
+    console.log('prependItems');
+  }, []);
+
+  const isFetchingNextPage = false;
+
+  const fetchNextPage = () => {
+    console.log('Fetch next page');
+  };
+
   return (
     <Page>
       <PageContent>
         <Heading size="md" mb="4">
           {t('dashboard:title')}
         </Heading>
-        <Alert status="success" colorScheme="brand" borderRadius="md">
-          <AlertIcon />
-          <Box flex="1">
-            <AlertTitle fontSize="lg">
-              {t('dashboard:welcome.title')}
-            </AlertTitle>
-            <AlertDescription display="block">
-              {t('dashboard:welcome.description')}
-              <br />
-              <Text as="a" href="https://www.bearstudio.fr">
-                <Trans t={t} i18nKey="dashboard:welcome.author" />
-              </Text>
-            </AlertDescription>
-          </Box>
-        </Alert>
-        <ButtonGroup mt="4" spacing="4">
-          <Button
-            variant="link"
-            as="a"
-            href="https://github.com/BearStudio/start-ui"
-          >
-            <Icon icon={FaGithub} me="1" /> {t('dashboard:links.github')}
-          </Button>
-          <Button
-            variant="link"
-            as="a"
-            href="https://github.com/BearStudio/start-ui/issues/new"
-          >
-            <Icon icon={FiAlertCircle} me="1" />{' '}
-            {t('dashboard:links.openIssue')}
-          </Button>
-        </ButtonGroup>
+        <Stack spacing={0} flex={3}>
+          {messages && (
+            <Virtuoso
+              ref={scrollbarRef}
+              initialTopMostItemIndex={NB_ELEMENTS_BY_PAGE}
+              firstItemIndex={firstItemIndex}
+              data={messages.slice().reverse()}
+              startReached={prependItems}
+              context={{ loadMore: fetchNextPage, loading: isFetchingNextPage }}
+              style={{ height: '500px' }}
+              itemContent={(i, message) => (
+                <>
+                  <Message message={message} />
+                  <Divider />
+                </>
+              )}
+            />
+          )}
+        </Stack>
       </PageContent>
     </Page>
   );

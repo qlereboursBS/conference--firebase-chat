@@ -12,6 +12,8 @@ import {
   ScaleFade,
   Stack,
 } from '@chakra-ui/react';
+import { createUserWithEmailAndPassword, getAuth } from '@firebase/auth';
+import { AuthEventError } from '@firebase/auth/dist/src/model/popup_redirect';
 import { Formiz, useForm } from '@formiz/core';
 import {
   isEmail,
@@ -22,7 +24,6 @@ import {
 import { Trans, useTranslation } from 'react-i18next';
 import { Link as RouterLink } from 'react-router-dom';
 
-import { useCreateAccount } from '@/app/account/account.service';
 import { FieldInput } from '@/components/FieldInput';
 import { FieldSelect } from '@/components/FieldSelect';
 import { SlideIn } from '@/components/SlideIn';
@@ -32,43 +33,56 @@ import { AVAILABLE_LANGUAGES } from '@/constants/i18n';
 export const PageRegister = () => {
   const { t, i18n } = useTranslation();
   const form = useForm({
-    subscribe: { form: true, fields: ['langKey'] },
+    subscribe: { form: true, fields: ['langKey', 'email'] },
   });
   const toastError = useToastError();
-  const [accountEmail, setAccountEmail] = useState('');
 
   // Change language based on form
   useEffect(() => {
     i18n.changeLanguage(form.values?.langKey);
   }, [i18n, form.values?.langKey]);
 
-  const {
-    mutate: createUser,
-    isLoading,
-    isSuccess,
-  } = useCreateAccount({
-    onMutate: ({ email }) => {
-      setAccountEmail(email);
-    },
-    onError: (error) => {
-      const { errorKey, title } = error?.response?.data || {};
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+
+  const createAccount = async (formValues: {
+    email: string;
+    password: string;
+  }) => {
+    setIsLoading(true);
+    const auth = getAuth();
+    try {
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        formValues.email,
+        formValues.password
+      );
+      const user = userCredential.user;
+      setIsSuccess(true);
+    } catch (error) {
+      const firebaseError = error as AuthEventError;
+      const errorCode = firebaseError.code;
+      const errorMessage = firebaseError.message;
+      console.error({ errorCode, errorMessage });
 
       toastError({
         title: t('account:register.feedbacks.registrationError.title'),
-        description: title,
+        description: firebaseError.message,
       });
 
-      if (errorKey === 'userexists') {
+      if (errorCode === 'userexists') {
         form.invalidateFields({
           login: t('account:data.login.alreadyUsed'),
         });
       }
 
-      if (errorKey === 'emailexists') {
+      if (errorCode === 'emailexists') {
         form.invalidateFields({ email: t('account:data.email.alreadyUsed') });
       }
-    },
-  });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   if (isSuccess) {
     return (
@@ -93,7 +107,7 @@ export const PageRegister = () => {
               <Trans
                 t={t}
                 i18nKey="account:register.feedbacks.registrationSuccess.description"
-                values={{ email: accountEmail }}
+                values={{ email: form.values.email }}
               />
             </AlertDescription>
           </Alert>
@@ -119,7 +133,7 @@ export const PageRegister = () => {
         <Formiz
           id="register-form"
           autoForm
-          onValidSubmit={createUser}
+          onValidSubmit={createAccount}
           connect={form}
         >
           <Box

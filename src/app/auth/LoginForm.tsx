@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import {
   Alert,
@@ -9,6 +9,8 @@ import {
   Flex,
   Stack,
 } from '@chakra-ui/react';
+import { getAuth, signInWithEmailAndPassword } from '@firebase/auth';
+import { AuthEventError } from '@firebase/auth/dist/src/model/popup_redirect';
 import { Formiz, useForm } from '@formiz/core';
 import { Trans, useTranslation } from 'react-i18next';
 import { Link as RouterLink } from 'react-router-dom';
@@ -62,15 +64,27 @@ export const LoginForm = ({
   const form = useForm({ subscribe: 'form' });
   const toastError = useToastError();
 
-  const { mutate: login, isLoading } = useLogin({
-    onSuccess,
-    onError: (error) => {
+  const [isLoading, setIsLoading] = useState(false);
+
+  const login = async (formValues: { email: string; password: string }) => {
+    setIsLoading(true);
+    try {
+      const auth = getAuth();
+      await signInWithEmailAndPassword(
+        auth,
+        formValues.email,
+        formValues.password
+      );
+    } catch (error) {
+      const firebaseError = error as AuthEventError;
       toastError({
         title: t('auth:login.feedbacks.loginError.title'),
-        description: error?.response?.data?.title,
+        description: firebaseError?.message,
       });
-    },
-  });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <Box {...rest}>
