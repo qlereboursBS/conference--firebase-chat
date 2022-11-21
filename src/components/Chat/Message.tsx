@@ -44,6 +44,7 @@ export const Message: React.FC<React.PropsWithChildren<MessageProps>> = ({
         icon={<></>}
         name={message.author?.username}
         src={message.author?.avatarUrl}
+        title={message.author?.username}
       >
         {!message?.author && <Spinner size="xs" />}
       </Avatar>
@@ -54,9 +55,11 @@ export const Message: React.FC<React.PropsWithChildren<MessageProps>> = ({
         alignItems={isReversed ? 'flex-end' : 'flex-start'}
       >
         <HStack pl={2} fontWeight="medium" fontSize="sm">
-          <Badge size="md" variant="subtle" colorScheme="red">
-            Admin
-          </Badge>
+          {message.author?.isAdmin && (
+            <Badge size="md" variant="subtle" colorScheme="red">
+              Admin
+            </Badge>
+          )}
           <Text color="gray.800">{message.author?.username || 'unknown'}</Text>
           <Spacer />
         </HStack>
@@ -69,12 +72,16 @@ export const Message: React.FC<React.PropsWithChildren<MessageProps>> = ({
           alignItems="flex-start"
         >
           <Text
+            as={message.isDeletedByAdmin ? 'i' : 'span'}
+            fontSize={message.isDeletedByAdmin ? 'xs' : 'md'}
             whiteSpace="pre-line"
             overflow="hidden"
-            color="gray.600"
+            color={message.isDeletedByAdmin ? 'gray.400' : 'gray.600'}
             flex={1}
           >
-            {message.content}
+            {message.isDeletedByAdmin
+              ? 'Message deleted by an admin'
+              : message.content}
           </Text>
         </Flex>
       </Stack>

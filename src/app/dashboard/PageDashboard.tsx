@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from 'react';
 
 import { Flex, Heading, Stack } from '@chakra-ui/react';
+import { getAuth } from '@firebase/auth';
 import {
   DataSnapshot,
   getDatabase,
   onChildAdded,
+  onChildChanged,
   push,
   ref,
   set,
 } from '@firebase/database';
-import { useTranslation } from 'react-i18next';
 
 import { UserType, useAuthContext } from '@/app/auth/AuthContext';
 import { Page, PageContent } from '@/app/layout';
@@ -17,13 +18,13 @@ import { ChatUsers } from '@/components/Chat/ChatUsers';
 import { MessageList, MessageType } from '@/components/Chat/MessageList';
 import { WriteMessage } from '@/components/Chat/WriteMessage';
 
-export const PageDashboard = () => {
-  const { t } = useTranslation();
+export type ChatMessages = { [key: string]: MessageType };
 
+export const PageDashboard = () => {
   const { user } = useAuthContext();
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [messages, setMessages] = useState<MessageType[]>([]);
+  const [messages, setMessages] = useState<ChatMessages>({});
   const [users, setUsers] = useState<UserType[]>([]);
 
   useEffect(() => {
@@ -84,21 +85,44 @@ export const PageDashboard = () => {
   };
 
   useEffect(() => {
-    setMessages([]);
+    setMessages({});
     const unsubscribe = handleNewMessages();
+    const unsubscribeUpdate = handleMessageUpdated();
     return () => {
       console.log('out of useEffect');
       unsubscribe();
+      unsubscribeUpdate();
     };
   }, []);
 
   const handleNewMessages = () => {
-    console.log('Subscribing!');
+    console.log('Subscribing to new messages!');
     const messagesRef = ref(getDatabase(), '/rooms/room-1/messages');
-    return onChildAdded(messagesRef, (snapshot) => {
-      const newMessage = snapshot.val() as MessageType;
-      console.log({ newMessage });
-      setMessages((prev) => [...prev, newMessage]);
+    return onChildAdded(
+      messagesRef,
+      (snapshot) => {
+        handleMessage(snapshot.val() as MessageType, snapshot.key || '');
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
+  };
+
+  const handleMessage = (message: MessageType, messageKey: string) => {
+    console.log({ message });
+    setMessages((prev) => ({
+      ...prev,
+      [messageKey]: message,
+    }));
+  };
+
+  const handleMessageUpdated = () => {
+    console.log('Subscribing to message updates!');
+    const messagesRef = ref(getDatabase(), '/rooms/room-1/messages');
+    return onChildChanged(messagesRef, (snapshot) => {
+      console.log('Message updated', snapshot.val(), snapshot.key);
+      handleMessage(snapshot.val() as MessageType, snapshot.key || '');
     });
   };
 
@@ -132,8 +156,8 @@ export const PageDashboard = () => {
             <ChatUsers users={users} />
 
             <MessageList
-              messages={messages}
-              isLoading={messages?.length === 0}
+              messages={Object.values(messages)}
+              isLoading={Object.keys(messages)?.length === 0}
             />
 
             <WriteMessage

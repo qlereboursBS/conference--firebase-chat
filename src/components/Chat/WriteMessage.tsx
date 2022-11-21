@@ -52,6 +52,7 @@ export const WriteMessage: React.FC<WriteMessageProps> = ({
               size="xs"
               icon={<></>}
               name={user?.username}
+              title={user?.username}
               src={user?.avatarUrl}
             >
               {!user && <Spinner size="xs" />}

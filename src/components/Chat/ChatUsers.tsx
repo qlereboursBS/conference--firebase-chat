@@ -10,6 +10,7 @@ export const ChatUsers: React.FC<ChatUsersProps> = ({ users }) => {
       <Text fontWeight="bold">Participants:</Text>
       {users.map((user) => (
         <Avatar
+          key={user.uid}
           size="xs"
           icon={<></>}
           name={user.username}

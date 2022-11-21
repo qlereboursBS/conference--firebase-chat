@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 
-import { Center, Divider, Text } from '@chakra-ui/react';
+import { Center, Divider, Flex, Text } from '@chakra-ui/react';
 import { Virtuoso, VirtuosoHandle } from 'react-virtuoso';
 
 import { UserType } from '@/app/auth/AuthContext';
@@ -18,10 +18,10 @@ export const MessageList: React.FC<MessageListProps> = ({
   if (isLoading) {
     return (
       <Center flex={1} mx={4}>
-        <Text color="brand.600">
+        <Flex color="brand.600" justify="center" flexDir="column">
           <Loader />
-          Waiting for new messages...
-        </Text>
+          <Text>Waiting for new messages...</Text>
+        </Flex>
       </Center>
     );
   }
@@ -33,6 +33,7 @@ export const MessageList: React.FC<MessageListProps> = ({
       firstItemIndex={firstItemIndex}
       data={messages}
       alignToBottom
+      followOutput="smooth"
       itemContent={(i, message) => (
         <>
           <Message message={message} bg={i % 2 === 0 ? 'gray.50' : 'white'} />
@@ -52,4 +53,5 @@ export type MessageType = {
   content: string;
   author: UserType;
   createdAt: number;
+  isDeletedByAdmin?: boolean;
 };
