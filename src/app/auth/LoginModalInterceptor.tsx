@@ -21,7 +21,7 @@ import { LoginForm } from '@/app/auth/LoginForm';
 export const LoginModalInterceptor = () => {
   const { t } = useTranslation();
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const { isAuthenticated, updateToken } = useAuthContext();
+  const { isAuthenticated, updateUser } = useAuthContext();
   const queryCache = useQueryClient();
   const navigate = useNavigate();
   const { pathname } = useLocation();
@@ -44,15 +44,15 @@ export const LoginModalInterceptor = () => {
     );
 
     return () => Axios.interceptors.response.eject(interceptor);
-  }, [onOpen, updateToken, queryCache]);
+  }, [onOpen, updateUser, queryCache]);
 
   // On Route Change
   useEffect(() => {
     if (isOpen && pathname !== pathnameRef.current) {
-      updateToken(null);
+      updateUser(null);
       onClose();
     }
-  }, [isOpen, updateToken, onClose, pathname]);
+  }, [isOpen, updateUser, onClose, pathname]);
 
   const handleLogin = () => {
     queryCache.refetchQueries();
@@ -60,7 +60,7 @@ export const LoginModalInterceptor = () => {
   };
 
   const handleClose = () => {
-    updateToken(null);
+    updateUser(null);
     onClose();
     navigate('/login');
   };

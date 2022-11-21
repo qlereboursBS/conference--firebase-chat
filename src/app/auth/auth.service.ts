@@ -10,18 +10,18 @@ export const useLogin = (
     { username: string; password: string }
   > = {}
 ) => {
-  const { updateToken } = useAuthContext();
-  return useMutation(
-    ({ username, password }) =>
-      Axios.post('/authenticate', { username, password }),
-    {
-      ...config,
-      onSuccess: (data, ...rest) => {
-        updateToken(data.id_token);
-        if (config.onSuccess) {
-          config.onSuccess(data, ...rest);
-        }
-      },
-    }
-  );
+  // const { updateUser } = useAuthContext();
+  // return useMutation(
+  //   ({ username, password }) =>
+  //     Axios.post('/authenticate', { username, password }),
+  //   {
+  //     ...config,
+  //     onSuccess: (data, ...rest) => {
+  //       updateUser(data.id_token);
+  //       if (config.onSuccess) {
+  //         config.onSuccess(data, ...rest);
+  //       }
+  //     },
+  //   }
+  // );
 };

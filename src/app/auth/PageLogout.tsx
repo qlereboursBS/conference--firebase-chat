@@ -7,15 +7,15 @@ import { useNavigate } from 'react-router-dom';
 import { useAuthContext } from '@/app/auth/AuthContext';
 
 export const PageLogout = () => {
-  const { updateToken } = useAuthContext();
+  const { updateUser } = useAuthContext();
   const navigate = useNavigate();
   const queryCache = useQueryClient();
 
   useEffect(() => {
-    updateToken(null);
+    updateUser(null);
     queryCache.clear();
     navigate('/');
-  }, [updateToken, queryCache, navigate]);
+  }, [updateUser, queryCache, navigate]);
 
   return (
     <Center flex="1">

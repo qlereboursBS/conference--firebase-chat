@@ -2,24 +2,32 @@ import React, { FC, useCallback, useContext, useState } from 'react';
 
 import { isBrowser } from '@/utils/ssr';
 
-type AuthContextValue = {
-  isAuthenticated: boolean;
-  updateToken(token?: string | null): void;
+type UserType = {
+  email: string;
+  uid: string;
+  username: string;
+  avatarUrl?: string;
 };
 
-export const AUTH_TOKEN_KEY = 'authToken';
+type AuthContextValue = {
+  isAuthenticated: boolean;
+  updateUser(user?: UserType | null): void;
+  user: UserType | null;
+};
+
+export const AUTH_USER_KEY = 'currentUser';
 
 const AuthContext = React.createContext<AuthContextValue>(null as TODO);
 
-const updateToken = (newToken?: string | null) => {
+const updateToken = (user?: UserType | null) => {
   if (!isBrowser) {
     return () => undefined;
   }
 
-  if (!newToken) {
-    localStorage.removeItem(AUTH_TOKEN_KEY);
+  if (!user) {
+    localStorage.removeItem(AUTH_USER_KEY);
   } else {
-    localStorage.setItem(AUTH_TOKEN_KEY, newToken);
+    localStorage.setItem(AUTH_USER_KEY, JSON.stringify(user));
   }
 };
 
@@ -28,23 +36,31 @@ export const useAuthContext = () => useContext(AuthContext);
 export const AuthProvider: FC<React.PropsWithChildren<unknown>> = ({
   children,
 }) => {
-  const [token, setToken] = useState(
-    (isBrowser && localStorage.getItem(AUTH_TOKEN_KEY)) ?? null
-  );
+  const getUser = (): UserType | null => {
+    if (isBrowser) {
+      return JSON.parse(
+        localStorage.getItem(AUTH_USER_KEY) || '{}'
+      ) as UserType;
+    }
+    return null;
+  };
 
-  const handleUpdateToken = useCallback(
-    (newToken: string) => {
-      setToken(newToken);
-      updateToken(newToken);
+  const [user, setUser] = useState<UserType | null>(getUser());
+
+  const handleUpdateUser = useCallback(
+    (newUser: UserType) => {
+      setUser(newUser);
+      updateToken(newUser);
     },
-    [setToken]
+    [setUser]
   );
 
   return (
     <AuthContext.Provider
       value={{
-        isAuthenticated: !!token,
-        updateToken: handleUpdateToken,
+        isAuthenticated: !!user,
+        updateUser: handleUpdateUser,
+        user,
       }}
     >
       {children}

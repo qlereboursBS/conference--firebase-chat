@@ -6,7 +6,16 @@
 4. Create the Database (before saving the configuration!)
 5. Add firebase configuration json in constants/firebase.ts, don't forget to add `!getApps().length`
 6. Import the configuration in `Providers.tsx`
-7. Go to the PageRegister.tsx page, delete the useCreateAccount hook and create a createAccount function
+7. Go to the `PageRegister.tsx` page, delete the useCreateAccount hook and create a createAccount function
+   1. This function will create a firebase account with email / password, in Firebase Authentication system
+   2. At the moment, don't create the user in Database
+   3. Don't forget to call the setIsSuccess method
+   4. Test and show that the user has been created in firebase
+8. Go in `LoginForm.tsx`, and create a `login` method, that will allow to connect. Don't forget to call the onSuccess method. (Spoiler alert, it won't do anything)
+9. Go back to the register form to add the user creation in database
+10. Go to the login form and add the user retrieving. Don't forget to call the `useAuthContext.updateUser` method.
+
+
 
 
 

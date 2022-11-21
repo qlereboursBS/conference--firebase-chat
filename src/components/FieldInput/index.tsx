@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { ChangeEventHandler, useEffect, useState } from 'react';
 
 import {
   IconButton,
@@ -63,6 +63,13 @@ export const FieldInput = (props: FieldInputProps) => {
     ...rest,
   };
 
+  const handleChange = (e: any) => {
+    setValue(e.target.value);
+    if (props.onChange) {
+      props.onChange(e);
+    }
+  };
+
   return (
     <FormGroup {...formGroupProps}>
       <InputGroup size={size}>
@@ -70,7 +77,7 @@ export const FieldInput = (props: FieldInputProps) => {
           type={showPassword ? 'text' : type || 'text'}
           id={id}
           value={value ?? ''}
-          onChange={(e) => setValue(e.target.value)}
+          onChange={handleChange}
           onFocus={() => setIsTouched(false)}
           onBlur={() => setIsTouched(true)}
           placeholder={placeholder ? String(placeholder) : ''}

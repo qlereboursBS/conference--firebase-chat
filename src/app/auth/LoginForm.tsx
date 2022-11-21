@@ -3,10 +3,12 @@ import React, { useState } from 'react';
 import { Box, BoxProps, Button, Flex, Stack } from '@chakra-ui/react';
 import { getAuth, signInWithEmailAndPassword } from '@firebase/auth';
 import { AuthEventError } from '@firebase/auth/dist/src/model/popup_redirect';
+import { child, get, getDatabase, ref } from '@firebase/database';
 import { Formiz, useForm } from '@formiz/core';
 import { useTranslation } from 'react-i18next';
 import { Link as RouterLink } from 'react-router-dom';
 
+import { useAuthContext } from '@/app/auth/AuthContext';
 import { FieldInput } from '@/components/FieldInput';
 import { useToastError } from '@/components/Toast';
 
@@ -19,6 +21,7 @@ export const LoginForm = ({
   const { t } = useTranslation();
   const form = useForm({ subscribe: 'form' });
   const toastError = useToastError();
+  const { updateUser } = useAuthContext();
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -26,12 +29,23 @@ export const LoginForm = ({
     setIsLoading(true);
     try {
       const auth = getAuth();
+      const database = getDatabase();
       const userCredentials = await signInWithEmailAndPassword(
         auth,
         formValues.email,
         formValues.password
       );
       console.log(userCredentials.user);
+
+      // get user in database and set it in storage
+      const userRef = ref(database, `/users/${userCredentials.user.uid}`);
+      const userSnapshot = await get(child(userRef, '/'));
+      console.log({ userSnapshot });
+      const userInDatabase = userSnapshot.val();
+      console.log({ userInDatabase });
+      // set user in storage
+      updateUser(userInDatabase);
+
       onSuccess();
     } catch (error) {
       const firebaseError = error as AuthEventError;
