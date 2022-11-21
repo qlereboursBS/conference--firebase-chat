@@ -83,7 +83,7 @@ export const PageRegister = () => {
         username: formValues.username,
       };
       await set(userRef, userInDatabase);
-      handleImageUpload(user.uid);
+      await handleImageUpload(user.uid);
     } catch (error) {
       const firebaseError = error as AuthEventError;
       const errorCode = firebaseError.code;

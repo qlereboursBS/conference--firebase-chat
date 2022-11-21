@@ -1,82 +1,144 @@
-import React, { useCallback, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 
-import { Divider, Heading, Stack } from '@chakra-ui/react';
+import { Flex, Heading, Stack } from '@chakra-ui/react';
+import {
+  DataSnapshot,
+  getDatabase,
+  onChildAdded,
+  push,
+  ref,
+  set,
+} from '@firebase/database';
 import { useTranslation } from 'react-i18next';
-import { Virtuoso, VirtuosoHandle } from 'react-virtuoso';
 
+import { UserType, useAuthContext } from '@/app/auth/AuthContext';
 import { Page, PageContent } from '@/app/layout';
-import { Message } from '@/components/Message';
-
-const NB_ELEMENTS_BY_PAGE = 10;
-
-export type MessageType = {
-  content: string;
-  author: string;
-};
+import { MessageList, MessageType } from '@/components/Chat/MessageList';
+import { WriteMessage } from '@/components/Chat/WriteMessage';
 
 export const PageDashboard = () => {
   const { t } = useTranslation();
-  const scrollbarRef = useRef<VirtuosoHandle>(null);
-  const firstItemIndex = 10;
 
-  const messages = [
-    {
-      content: 'Hello world!',
-      author: 'Quentin Lerebours',
-    },
-    {
-      content: 'Hello Quentin!',
-      author: 'Zhaniya',
-    },
-  ];
+  const { user } = useAuthContext();
 
-  const prependItems = useCallback(async () => {
-    // // Si pas de data à charger on ne fetch pas
-    // if (!hasNextPage) {
-    //   return;
-    // }
-    //
-    // const query = await fetchNextPage();
-    // // On récupère le nombre d'éléments présent sur cette nouvelle page (la dernière de la query)
-    // const indexDelta = query.data.pages.at(-1).content.length;
-    // // On décalle l'index du nombre de nouveaux items
-    // setFirstItemIndex(firstItemIndex - indexDelta);
-    //
-    // return false;
-    console.log('prependItems');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [messages, setMessages] = useState<MessageType[]>([]);
+  const [users, setUsers] = useState<UserType[]>([]);
+
+  useEffect(() => {
+    if (user) {
+      joinRoom(user);
+    }
+  }, [user]);
+
+  const joinRoom = async (user: UserType) => {
+    try {
+      const roomRef = ref(getDatabase(), `/rooms/room-1/users/${user.uid}`);
+      await set(roomRef, user);
+      console.log('Joined room successfully');
+    } catch (e) {
+      console.error('An error occurred while joining room');
+    }
+  };
+
+  const handleSendMessage = async (message: string): Promise<boolean> => {
+    if (!user) {
+      console.error('User was empty when sending message');
+      return false;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const messagesRef = ref(getDatabase(), `/rooms/room-1/messages`);
+      const messageToCreate: MessageType = {
+        content: message,
+        author: user,
+        createdAt: +new Date(),
+      };
+      await push(messagesRef, messageToCreate);
+      console.log('Sent message successfully');
+      return true;
+    } catch (e) {
+      console.error('An error occurred while sending message room');
+      return false;
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  // useEffect(() => {
+  //   handleNewUsers();
+  // }, []);
+
+  //
+  // const handleNewUsers = () => {
+  //   const usersRef = ref(getDatabase(), '/rooms/room-1/users');
+  //   onChildAdded(usersRef, (snapshot) => {
+  //     const newUser = snapshot.val();
+  //     console.log({ newUser })
+  //     setUsers((prev) => [...prev, newUser]);
+  //   });
+  // }
+
+  useEffect(() => {
+    setMessages([]);
+    const unsubscribe = handleNewMessages();
+    return () => {
+      console.log('out of useEffect');
+      unsubscribe();
+    };
   }, []);
 
-  const isFetchingNextPage = false;
-
-  const fetchNextPage = () => {
-    console.log('Fetch next page');
+  const handleNewMessages = () => {
+    console.log('Subscribing!');
+    const messagesRef = ref(getDatabase(), '/rooms/room-1/messages');
+    return onChildAdded(messagesRef, (snapshot) => {
+      const newMessage = snapshot.val() as MessageType;
+      console.log({ newMessage });
+      setMessages((prev) => [...prev, newMessage]);
+    });
   };
+
+  // const messages: MessageType[] = [
+  //   {
+  //     content: 'Hello world!',
+  //     author: {
+  //       username: 'Quentin Lerebours',
+  //       uid: '0',
+  //       email: 'a',
+  //     },
+  //   },
+  //   {
+  //     content: 'Hello Quentin!',
+  //     author: {
+  //       username: 'Zhaniya',
+  //       uid: '1',
+  //       email: 'a',
+  //     },
+  //   },
+  // ];
 
   return (
     <Page>
       <PageContent>
-        <Heading size="md" mb="4">
+        <Heading size="lg" mb="4">
           {t('dashboard:title')}
         </Heading>
-        <Stack spacing={0} flex={3}>
-          {messages && (
-            <Virtuoso
-              ref={scrollbarRef}
-              initialTopMostItemIndex={NB_ELEMENTS_BY_PAGE}
-              firstItemIndex={firstItemIndex}
-              data={messages.slice().reverse()}
-              startReached={prependItems}
-              context={{ loadMore: fetchNextPage, loading: isFetchingNextPage }}
-              style={{ height: '500px' }}
-              itemContent={(i, message) => (
-                <>
-                  <Message message={message} />
-                  <Divider />
-                </>
-              )}
+        <Flex shadow="md" rounded="md" flex={1} bg="white">
+          <Stack spacing={0} flex={1}>
+            <MessageList
+              messages={messages}
+              isLoading={messages?.length === 0}
             />
-          )}
-        </Stack>
+
+            <WriteMessage
+              user={user}
+              isSubmitting={isSubmitting}
+              sendMessage={handleSendMessage}
+            />
+          </Stack>
+        </Flex>
       </PageContent>
     </Page>
   );

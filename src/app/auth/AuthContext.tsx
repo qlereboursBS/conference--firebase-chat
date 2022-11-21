@@ -2,7 +2,7 @@ import React, { FC, useCallback, useContext, useState } from 'react';
 
 import { isBrowser } from '@/utils/ssr';
 
-type UserType = {
+export type UserType = {
   email: string;
   uid: string;
   username: string;

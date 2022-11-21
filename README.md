@@ -1,23 +1,36 @@
 ## Conference steps
 
+## Project setup
+
 1. Generate a Firebase project
-2. In the same time, generate a StartUI project
+2. In the same time, show round StartUI, already generated (on commit #7a2108c39d0f712e5d35e875fbc2f0933e476f83)
 3. Show Firebase menus and features around 
 4. Create the Database (before saving the configuration!)
-5. Add firebase configuration json in constants/firebase.ts, don't forget to add `!getApps().length`
-6. Import the configuration in `Providers.tsx`
-7. Go to the `PageRegister.tsx` page, delete the useCreateAccount hook and create a createAccount function
+5. Checkout to the `conference-setup` branch containing the updated StartUI repo, without firebase code
+
+## User authentication
+
+1. Add firebase configuration json in constants/firebase.ts, don't forget to add `!getApps().length`
+2. Import the configuration in `Providers.tsx`
+3. Go to the `PageRegister.tsx` page, delete the useCreateAccount hook and create a createAccount function
    1. This function will create a firebase account with email / password, in Firebase Authentication system
    2. At the moment, don't create the user in Database
    3. Don't forget to call the setIsSuccess method
    4. Test and show that the user has been created in firebase
-8. Go in `LoginForm.tsx`, and create a `login` method, that will allow to connect. Don't forget to call the onSuccess method. (Spoiler alert, it won't do anything)
-9. Go back to the register form to add the user creation in database
-10. Go to the login form and add the user retrieving. Don't forget to call the `useAuthContext.updateUser` method.
+4. Go in `LoginForm.tsx`, and create a `login` method, that will allow to connect. Don't forget to call the onSuccess method. (Spoiler alert, it won't do anything)
+5. Go back to the register form to add the user creation in database
+6. Go to the login form and add the user retrieving. Don't forget to call the `useAuthContext.updateUser` method.
 
+## Avatar upload
+1. Create the `handleImageUpload` function handling upload and progress
+2. Create the `fileUploadProgress` state and use it in upload helper
+3. In `handleUploadSuccess` callback, get download URL and don't forget to call `setIsSuccess(true)` to go to next page
 
-
-
+## Chat
+1. Complete the `joinRoom` function that will write to `/rooms/room-1/users/${user.uid}` and call it in useEffect that depends on user
+2. Complete the `handleSendMessage` function that will write to `/rooms/room-1/messages`
+3. Complete the `handleNewMessages` function that will read with `onChildAdded` function.
+4. Show that we need to unsubscribe! (and reset messages to empty array)
 
 <h1 align="center"><img src="assets/start-ui-web.svg" alt="Start UI Web" width="300" /></h1>
 
