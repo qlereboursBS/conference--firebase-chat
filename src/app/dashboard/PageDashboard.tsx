@@ -13,6 +13,7 @@ import { useTranslation } from 'react-i18next';
 
 import { UserType, useAuthContext } from '@/app/auth/AuthContext';
 import { Page, PageContent } from '@/app/layout';
+import { ChatUsers } from '@/components/Chat/ChatUsers';
 import { MessageList, MessageType } from '@/components/Chat/MessageList';
 import { WriteMessage } from '@/components/Chat/WriteMessage';
 
@@ -67,19 +68,20 @@ export const PageDashboard = () => {
     }
   };
 
-  // useEffect(() => {
-  //   handleNewUsers();
-  // }, []);
+  useEffect(() => {
+    setUsers([]);
+    const unsubscribe = handleNewUsers();
+    return () => unsubscribe();
+  }, []);
 
-  //
-  // const handleNewUsers = () => {
-  //   const usersRef = ref(getDatabase(), '/rooms/room-1/users');
-  //   onChildAdded(usersRef, (snapshot) => {
-  //     const newUser = snapshot.val();
-  //     console.log({ newUser })
-  //     setUsers((prev) => [...prev, newUser]);
-  //   });
-  // }
+  const handleNewUsers = () => {
+    const usersRef = ref(getDatabase(), '/rooms/room-1/users');
+    return onChildAdded(usersRef, (snapshot) => {
+      const newUser = snapshot.val();
+      console.log({ newUser });
+      setUsers((prev) => [...prev, newUser]);
+    });
+  };
 
   useEffect(() => {
     setMessages([]);
@@ -123,10 +125,12 @@ export const PageDashboard = () => {
     <Page>
       <PageContent>
         <Heading size="lg" mb="4">
-          {t('dashboard:title')}
+          #room-1
         </Heading>
         <Flex shadow="md" rounded="md" flex={1} bg="white">
           <Stack spacing={0} flex={1}>
+            <ChatUsers users={users} />
+
             <MessageList
               messages={messages}
               isLoading={messages?.length === 0}
