@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "description": "Opinionated UI starter with ⚛️ React, ⚡️ Chakra UI, ⚛️ React Query & 🐜 Formiz — From the 🐻 BearStudio Team",
   "engines": {
-    "node": ">=14.17",
+    "node": ">=14.17 <17",
     "npm": "please-use-yarn",
     "yarn": ">=1.22"
   },
@@ -13,8 +13,8 @@
     "postinstall": "yarn build:info && yarn theme:generate-typing",
     "test": "cypress open",
     "test:ci": "cypress run --component",
-    "dev": "yarn docs:build && next dev",
-    "build": "yarn build:info && yarn docs:build && next build",
+    "dev": "next dev",
+    "build": "yarn build:info && next build",
     "build:info": "node .build-info.generate.js",
     "start": "next start",
     "pretty": "prettier -w .",
@@ -25,8 +25,7 @@
     "static:build": "yarn build && next export",
     "static:serve": "yarn static:build && npx servor out app.html 5000",
     "theme:generate-typing": "chakra-cli tokens ./src/theme/theme.ts",
-    "theme:generate-icons": "svgr --config-file src/components/Icons/svgr.config.js src/components/Icons/svg-sources",
-    "docs:build": "swagger-cli bundle src/mocks/openapi/openapi.yaml -t json --outfile public/open-api.json"
+    "theme:generate-icons": "svgr --config-file src/components/Icons/svgr.config.js src/components/Icons/svg-sources"
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx,json}": "prettier --write",
@@ -48,6 +47,10 @@
     "axios": "0.27.2",
     "cypress": "10.3.0",
     "dayjs": "1.11.3",
+    "firebase": "^9.14.0",
+    "firebase-admin": "11.3.0",
+    "firebase-functions": "4.1.0",
+    "firebase-tools": "^11.16.1",
     "framer-motion": "6.5.1",
     "i18next": "21.8.14",
     "isomorphic-form-data": "2.0.0",
@@ -64,6 +67,7 @@
     "react-router-dom": "6.3.0",
     "react-select": "5.4.0",
     "react-use-measure": "2.1.1",
+    "react-virtuoso": "^3.1.4",
     "sharp": "0.30.7",
     "swagger-cli": "4.0.4",
     "swagger-ui-react": "4.12.0",
@@ -101,7 +105,6 @@
     "eslint-plugin-react-hooks": "4.6.0",
     "husky": "8.0.1",
     "lint-staged": "13.0.3",
-    "miragejs": "0.1.45",
     "prettier": "2.7.1",
     "react-is": "18.2.0",
     "storybook-dark-mode": "1.1.0",

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 import {
   Alert,
@@ -12,6 +12,17 @@ import {
   ScaleFade,
   Stack,
 } from '@chakra-ui/react';
+import { createUserWithEmailAndPassword, getAuth } from '@firebase/auth';
+import { AuthEventError } from '@firebase/auth/dist/src/model/popup_redirect';
+import { getDatabase, ref, set } from '@firebase/database';
+import {
+  UploadTask,
+  UploadTaskSnapshot,
+  getDownloadURL,
+  getStorage,
+  ref as storageRef,
+  uploadBytesResumable,
+} from '@firebase/storage';
 import { Formiz, useForm } from '@formiz/core';
 import {
   isEmail,
@@ -22,53 +33,110 @@ import {
 import { Trans, useTranslation } from 'react-i18next';
 import { Link as RouterLink } from 'react-router-dom';
 
-import { useCreateAccount } from '@/app/account/account.service';
 import { FieldInput } from '@/components/FieldInput';
 import { FieldSelect } from '@/components/FieldSelect';
 import { SlideIn } from '@/components/SlideIn';
-import { useToastError } from '@/components/Toast';
+import { useToastError, useToastSuccess } from '@/components/Toast';
 import { AVAILABLE_LANGUAGES } from '@/constants/i18n';
 
 export const PageRegister = () => {
   const { t, i18n } = useTranslation();
   const form = useForm({
-    subscribe: { form: true, fields: ['langKey'] },
+    subscribe: { form: true, fields: ['langKey', 'email'] },
   });
+  const fileRef = useRef();
   const toastError = useToastError();
-  const [accountEmail, setAccountEmail] = useState('');
+  const toastSuccess = useToastSuccess();
 
   // Change language based on form
   useEffect(() => {
     i18n.changeLanguage(form.values?.langKey);
   }, [i18n, form.values?.langKey]);
 
-  const {
-    mutate: createUser,
-    isLoading,
-    isSuccess,
-  } = useCreateAccount({
-    onMutate: ({ email }) => {
-      setAccountEmail(email);
-    },
-    onError: (error) => {
-      const { errorKey, title } = error?.response?.data || {};
+  const [fileUploadProgress, setFileUploadProgress] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+
+  const createAccount = async (formValues: {
+    email: string;
+    password: string;
+    username: string;
+  }) => {
+    setIsLoading(true);
+    const auth = getAuth();
+    const database = getDatabase();
+    try {
+      // create user in authentication system
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        formValues.email,
+        formValues.password
+      );
+      const user = userCredential.user;
+      console.log(user);
+
+      // create user in database
+      const userRef = ref(database, `/users/${user.uid}`);
+      const userInDatabase = {
+        uid: user.uid,
+        email: user.email,
+        username: formValues.username,
+      };
+      await set(userRef, userInDatabase);
+      await handleImageUpload(user.uid);
+    } catch (error) {
+      const firebaseError = error as AuthEventError;
+      const errorCode = firebaseError.code;
+      const errorMessage = firebaseError.message;
+      console.error({ errorCode, errorMessage });
 
       toastError({
         title: t('account:register.feedbacks.registrationError.title'),
-        description: title,
+        description: firebaseError.message,
       });
 
-      if (errorKey === 'userexists') {
-        form.invalidateFields({
-          login: t('account:data.login.alreadyUsed'),
-        });
-      }
-
-      if (errorKey === 'emailexists') {
+      if (errorCode === 'auth/email-already-in-use') {
         form.invalidateFields({ email: t('account:data.email.alreadyUsed') });
       }
-    },
-  });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleImageUpload = async (userUid: string) => {
+    console.log('file', fileRef.current);
+    const storage = getStorage();
+    const imageRef = storageRef(storage, `users/${userUid}/avatar.jpg`);
+    // @ts-ignore
+    const uploadTask = uploadBytesResumable(imageRef, fileRef.current);
+    uploadTask.on('state_changed', handleTransfer, handleUploadFailed, () =>
+      handleUploadSucceed(uploadTask, userUid)
+    );
+  };
+
+  const handleTransfer = (snapshot: UploadTaskSnapshot) => {
+    console.log(snapshot);
+    setFileUploadProgress(
+      (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+    );
+  };
+
+  const handleUploadFailed = () => {
+    toastError({ title: 'Error', description: "Couldn't upload file" });
+  };
+
+  const handleUploadSucceed = async (task: UploadTask, userUid: string) => {
+    const downloadUrl = await getDownloadURL(task.snapshot.ref);
+    console.log(downloadUrl);
+    toastSuccess({
+      title: 'Success',
+      description: 'File uploaded successfully',
+    });
+    const userAvatarRef = ref(getDatabase(), `/users/${userUid}/avatarUrl`);
+    await set(userAvatarRef, downloadUrl);
+
+    setIsSuccess(true);
+  };
 
   if (isSuccess) {
     return (
@@ -93,7 +161,7 @@ export const PageRegister = () => {
               <Trans
                 t={t}
                 i18nKey="account:register.feedbacks.registrationSuccess.description"
-                values={{ email: accountEmail }}
+                values={{ email: form.values.email }}
               />
             </AlertDescription>
           </Alert>
@@ -119,7 +187,7 @@ export const PageRegister = () => {
         <Formiz
           id="register-form"
           autoForm
-          onValidSubmit={createUser}
+          onValidSubmit={createAccount}
           connect={form}
         >
           <Box
@@ -143,7 +211,7 @@ export const PageRegister = () => {
                 defaultValue={i18n.language}
               />
               <FieldInput
-                name="login"
+                name="username"
                 label={t('account:data.login.label')}
                 required={t('account:data.login.required') as string}
                 validations={[
@@ -154,12 +222,6 @@ export const PageRegister = () => {
                   {
                     rule: isMaxLength(50),
                     message: t('account:data.login.tooLong', { max: 50 }),
-                  },
-                  {
-                    rule: isPattern(
-                      '^[a-zA-Z0-9!$&*+=?^_`{|}~.-]+@[a-zA-Z0-9-]+(?:\\.[a-zA-Z0-9-]+)*$|^[_.@A-Za-z0-9-]+$'
-                    ),
-                    message: t('account:data.login.invalid'),
                   },
                 ]}
               />
@@ -197,6 +259,20 @@ export const PageRegister = () => {
                     message: t('account:data.password.tooLong', { min: 50 }),
                   },
                 ]}
+              />
+              <FieldInput
+                name="avatar"
+                type="file"
+                label="Avatar"
+                helper={
+                  !!fileUploadProgress &&
+                  `File upload started ${Math.round(fileUploadProgress)}%`
+                }
+                onChange={(evt) => {
+                  if (!!evt?.target?.files?.[0]) {
+                    fileRef.current = evt?.target?.files?.[0];
+                  }
+                }}
               />
               <Flex>
                 <Button

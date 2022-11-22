@@ -62,7 +62,9 @@ const MainMenuItem = ({ to, ...rest }: BoxProps & { to: string }) => {
 
 export const MainMenu = ({ ...rest }) => {
   const { t } = useTranslation();
-  const { isAdmin } = useAccount();
+  // const { isAdmin } = useAccount();
+  const isAdmin = false;
+
   return (
     <Stack direction="row" spacing="1" {...rest}>
       <MainMenuItem to="/dashboard">

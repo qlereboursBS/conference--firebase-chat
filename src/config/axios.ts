@@ -1,12 +1,12 @@
 import Axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 
-import { AUTH_TOKEN_KEY } from '@/app/auth/AuthContext';
+import { AUTH_USER_KEY } from '@/app/auth/AuthContext';
 import { isBrowser } from '@/utils/ssr';
 
 Axios.interceptors.request.use(
   (config: AxiosRequestConfig) => {
     const isExternal = !!config?.url?.startsWith('http');
-    const token = isBrowser ? localStorage.getItem(AUTH_TOKEN_KEY) : null;
+    const token = isBrowser ? localStorage.getItem(AUTH_USER_KEY) : null;
     const authHeaders =
       token && !isExternal ? { Authorization: `Bearer ${token}` } : {};
     return {

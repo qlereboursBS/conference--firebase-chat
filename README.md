@@ -1,3 +1,97 @@
+## Conference steps
+
+## Project setup
+
+1. Generate a Firebase project
+2. In the same time, show round StartUI, already generated (on commit #7a2108c39d0f712e5d35e875fbc2f0933e476f83)
+3. Show Firebase menus and features around 
+4. Create the Database (before saving the configuration!)
+5. Checkout to the `conference-setup` branch containing the updated StartUI repo, without firebase code
+
+## User authentication
+
+1. Add firebase configuration json in constants/firebase.ts, don't forget to add `!getApps().length`
+2. Import the configuration in `Providers.tsx`
+3. Go to the `PageRegister.tsx` page, delete the useCreateAccount hook and create a createAccount function
+   1. This function will create a firebase account with email / password, in Firebase Authentication system
+   2. At the moment, don't create the user in Database
+   3. Don't forget to call the setIsSuccess method
+   4. Test and show that the user has been created in firebase
+4. Go in `LoginForm.tsx`, and create a `login` method, that will allow to connect. Don't forget to call the onSuccess method. (Spoiler alert, it won't do anything)
+5. Go back to the register form to add the user creation in database
+6. Go to the login form and add the user retrieving. Don't forget to call the `useAuthContext.updateUser` method.
+
+## Avatar upload
+1. Create the `handleImageUpload` function handling upload and progress
+2. Create the `fileUploadProgress` state and use it in upload helper
+3. In `handleUploadSuccess` callback, get download URL and don't forget to call `setIsSuccess(true)` to go to next page
+
+## Chat
+1. Complete the `joinRoom` function that will write to `/rooms/room-1/users/${user.uid}` and call it in useEffect that depends on user
+2. Complete the `handleSendMessage` function that will write to `/rooms/room-1/messages`
+3. Complete the `handleNewMessages` function that will read with `onChildAdded` function.
+4. Show that we need to unsubscribe! (and reset messages to empty array)
+5. Load users in `handleNewUsers` and don't forget to unsubscribe
+
+## Moderation
+1. Create a function in the `functions/index.js` file, to remove delete messages containing insults.
+2. Show that it's not working, because we used the `onChildAdded` function and not `onChildUpdated`
+3. Add the listener to `onChildUpdated` and put the logic in common in a function
+
+## What about the security?
+1. Everyone can write to any user's data:
+```
+curl -X PUT 'https://fir-messagingtest-9565d-default-rtdb.europe-west1.firebasedatabase.app/users/2puMIwfonzNdJq8BJf7EnlYh3Ox2.json' -d '{ "avatarUrl": "https://firebasestorage.googleapis.com/v0/b/fir-messagingtest-9565d.appspot.com/o/users%2F2puMIwfonzNdJq8BJf7EnlYh3Ox2%2Favatar.jpg?alt=media&token=d70d8efd-eac5-47cb-9f5d-388428944bcb", "email": "q+8@bearstudio.fr", "uid": "2puMIwfonzNdJq8BJf7EnlYh3Ox2", "username": "Quentin" }'
+```
+2. Update rules by explaining each one:
+```
+{
+  "rules": {
+    "users": {
+      "$uid": {
+        ".write": "$uid === auth.uid && newData.exists() && (!data.exists() || data.child('uid').val() === newData.child('uid').val())",
+        ".read": true
+      }
+    },
+    "rooms": {
+      "$roomId": {
+        "users": {
+          "$uid": {   
+          	".read": true,
+        		".write": "$uid === auth.uid && newData.exists() && (!data.exists() || (data.child('email').val() === newData.child('email').val() && data.child('uuid').val() === newData.child('uuid').val()))",
+          }
+        }, 
+        "messages": {
+          ".read": true,
+          "$messageId": {   
+        		".write": "newData.exists() && (!data.exists() || (data.child('author').child('uid').val() === newData.child('author').child('uid').val() && newData.child('author').child('uid').val() === auth.uid))",
+          }
+        }
+      }
+    }
+  }
+}
+```
+3. Add the admin field manually for a user, and explain why it's not secured by security rules
+4. Secure it by adding `data.child('isAdmin').val() === newData.child('isAdmin').val()`. Don't forget parenthesis
+5. Test with the following request. Don't forget to get a new token by uncommenting the code in `AuthContext.tsx`
+```
+curl -X PUT 'https://fir-messagingtest-9565d-default-rtdb.europe-west1.firebasedatabase.app/users/2puMIwfonzNdJq8BJf7EnlYh3Ox2.json?auth=<token>' -d '{ "avatarUrl": "https://firebasestorage.googleapis.com/v0/b/fir-messagingtest-9565d.appspot.com/o/users%2F2puMIwfonzNdJq8BJf7EnlYh3Ox2%2Favatar.jpg?alt=media&token=d70d8efd-eac5-47cb-9f5d-388428944bcb", "email": "q+8@bearstudio.fr", "uid": "2puMIwfonzNdJq8BJf7EnlYh3Ox2", "username": "QuentinEdited", "isAdmin": true }'
+```
+6. Do the same with the storage rules
+```
+match /{allPaths=**} {
+  allow read;
+}
+match /users/{userUid}/{allImages=**} {
+  allow write: if request.auth != null && request.auth.uid == userUid;
+}
+```
+
+## Extras
+1. Add a scheduled function to delete old messages
+2. Deploy to Vercel
+
 <h1 align="center"><img src="assets/start-ui-web.svg" alt="Start UI Web" width="300" /></h1>
 
 [![Discord](https://img.shields.io/discord/452798408491663361)](https://go.bearstudio.fr/discord)

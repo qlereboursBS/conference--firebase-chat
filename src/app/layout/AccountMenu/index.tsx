@@ -26,7 +26,7 @@ import {
 import { Link, useNavigate } from 'react-router-dom';
 
 import buildInfo from '@/../.build-info.json';
-import { useAccount } from '@/app/account/account.service';
+import { useAuthContext } from '@/app/auth/AuthContext';
 import { Icon } from '@/components/Icons';
 
 const AppVersion = ({ ...rest }) => {
@@ -104,14 +104,19 @@ export const AccountMenu = ({ ...rest }) => {
   const { t } = useTranslation('layout');
 
   const { colorMode, toggleColorMode } = useColorMode();
-  const { account, isLoading } = useAccount();
   const navigate = useNavigate();
+  const { user } = useAuthContext();
 
   return (
     <Menu placement="bottom-end" {...rest}>
       <MenuButton borderRadius="full" _focusVisible={{ shadow: 'outline' }}>
-        <Avatar size="sm" icon={<></>} name={account?.login}>
-          {isLoading && <Spinner size="xs" />}
+        <Avatar
+          size="sm"
+          icon={<></>}
+          name={user?.username}
+          src={user?.avatarUrl}
+        >
+          {!user && <Spinner size="xs" />}
         </Avatar>
       </MenuButton>
       <MenuList
@@ -120,7 +125,7 @@ export const AccountMenu = ({ ...rest }) => {
         color="gray.800"
         _dark={{ color: 'white' }}
       >
-        <MenuGroup title={account?.email} noOfLines={1}>
+        <MenuGroup title={user?.email} noOfLines={1}>
           <MenuItem
             as={Link}
             to="/account"
