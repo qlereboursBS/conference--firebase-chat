@@ -78,7 +78,19 @@ curl -X PUT 'https://fir-messagingtest-9565d-default-rtdb.europe-west1.firebased
 ```
 curl -X PUT 'https://fir-messagingtest-9565d-default-rtdb.europe-west1.firebasedatabase.app/users/2puMIwfonzNdJq8BJf7EnlYh3Ox2.json?auth=<token>' -d '{ "avatarUrl": "https://firebasestorage.googleapis.com/v0/b/fir-messagingtest-9565d.appspot.com/o/users%2F2puMIwfonzNdJq8BJf7EnlYh3Ox2%2Favatar.jpg?alt=media&token=d70d8efd-eac5-47cb-9f5d-388428944bcb", "email": "q+8@bearstudio.fr", "uid": "2puMIwfonzNdJq8BJf7EnlYh3Ox2", "username": "QuentinEdited", "isAdmin": true }'
 ```
+6. Do the same with the storage rules
+```
+match /{allPaths=**} {
+  allow read;
+}
+match /users/{userUid}/{allImages=**} {
+  allow write: if request.auth != null && request.auth.uid == userUid;
+}
+```
 
+## Extras
+1. Add a scheduled function to delete old messages
+2. Deploy to Vercel
 
 <h1 align="center"><img src="assets/start-ui-web.svg" alt="Start UI Web" width="300" /></h1>
 
