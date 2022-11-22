@@ -1,6 +1,6 @@
 {
-    "name": "Start UI",
-    "short_name": "Start UI",
+    "name": "Firebase Chat",
+    "short_name": "Firebase Chat",
     "icons": [
         {
             "src": "/android-chrome-192x192.png",
