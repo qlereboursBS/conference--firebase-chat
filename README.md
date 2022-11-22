@@ -49,16 +49,16 @@ curl -X PUT 'https://fir-messagingtest-9565d-default-rtdb.europe-west1.firebased
   "rules": {
     "users": {
       "$uid": {
-        ".write": "$uid === auth.uid && newData.exists() && (!data.exists() || data.child('uid').val() === newData.child('uid').val())",
+        ".write": "$uid === auth.uid && newData.exists() && (!data.exists() || (data.child('isAdmin').val() === newData.child('isAdmin').val() && data.child('uid').val() === newData.child('uid').val()))",
         ".read": true
       }
     },
     "rooms": {
       "$roomId": {
         "users": {
-          "$uid": {   
-          	".read": true,
-        		".write": "$uid === auth.uid && newData.exists() && (!data.exists() || (data.child('email').val() === newData.child('email').val() && data.child('uuid').val() === newData.child('uuid').val()))",
+          ".read": true,
+          "$userUid": {   
+        		".write": "$userUid === auth.uid && newData.exists() && (!data.exists() || (data.child('email').val() === newData.child('email').val() && data.child('uuid').val() === newData.child('uuid').val()))",
           }
         }, 
         "messages": {
@@ -69,7 +69,7 @@ curl -X PUT 'https://fir-messagingtest-9565d-default-rtdb.europe-west1.firebased
         }
       }
     }
-  }
+  },
 }
 ```
 3. Add the admin field manually for a user, and explain why it's not secured by security rules
@@ -89,7 +89,7 @@ match /users/{userUid}/{allImages=**} {
 ```
 
 ## Extras
-1. Add a scheduled function to delete old messages
+1. Add a scheduled function to delete old messages. Don't forget to indexOn, while it's deploying: `".indexOn": "createdAt"`
 2. Deploy to Vercel
 
 <h1 align="center"><img src="assets/start-ui-web.svg" alt="Start UI Web" width="300" /></h1>

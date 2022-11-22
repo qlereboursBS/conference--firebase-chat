@@ -78,7 +78,7 @@ export const AuthProvider: FC<React.PropsWithChildren<unknown>> = ({
   return (
     <AuthContext.Provider
       value={{
-        isAuthenticated: !!user,
+        isAuthenticated: !!Object.keys(user || {}).length,
         updateUser: handleUpdateUser,
         user,
       }}
