@@ -6,7 +6,7 @@
 2. In the same time, show round StartUI, already generated (on commit #7a2108c39d0f712e5d35e875fbc2f0933e476f83)
 3. Show Firebase menus and features around 
 4. Create the Database (before saving the configuration!)
-5. Checkout to the `conference-setup` branch containing the updated StartUI repo, without firebase code
+5. Checkout to the `conf/start` branch containing the updated StartUI repo, without firebase code
 
 ## User authentication
 
@@ -91,6 +91,11 @@ match /users/{userUid}/{allImages=**} {
 ## Extras
 1. Add a scheduled function to delete old messages. Don't forget to indexOn, while it's deploying: `".indexOn": "createdAt"`
 2. Deploy to Vercel
+
+## Branches
+ - `main` contains the app with all the features
+ - `conf/start` is the app without the firebase code
+ - 
 
 <h1 align="center"><img src="assets/start-ui-web.svg" alt="Start UI Web" width="300" /></h1>
 
