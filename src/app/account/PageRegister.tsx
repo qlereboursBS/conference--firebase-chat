@@ -12,24 +12,8 @@ import {
   ScaleFade,
   Stack,
 } from '@chakra-ui/react';
-import { createUserWithEmailAndPassword, getAuth } from '@firebase/auth';
-import { AuthEventError } from '@firebase/auth/dist/src/model/popup_redirect';
-import { getDatabase, ref, set } from '@firebase/database';
-import {
-  UploadTask,
-  UploadTaskSnapshot,
-  getDownloadURL,
-  getStorage,
-  ref as storageRef,
-  uploadBytesResumable,
-} from '@firebase/storage';
 import { Formiz, useForm } from '@formiz/core';
-import {
-  isEmail,
-  isMaxLength,
-  isMinLength,
-  isPattern,
-} from '@formiz/validations';
+import { isEmail, isMaxLength, isMinLength } from '@formiz/validations';
 import { Trans, useTranslation } from 'react-i18next';
 import { Link as RouterLink } from 'react-router-dom';
 
@@ -63,80 +47,50 @@ export const PageRegister = () => {
     username: string;
   }) => {
     setIsLoading(true);
-    const auth = getAuth();
-    const database = getDatabase();
     try {
-      // create user in authentication system
-      const userCredential = await createUserWithEmailAndPassword(
-        auth,
-        formValues.email,
-        formValues.password
-      );
-      const user = userCredential.user;
-      console.log(user);
-
-      // create user in database
-      const userRef = ref(database, `/users/${user.uid}`);
-      const userInDatabase = {
-        uid: user.uid,
-        email: user.email,
-        username: formValues.username,
-      };
-      await set(userRef, userInDatabase);
-      await handleImageUpload(user.uid);
+      // TODO create user in authentication system
+      // TODO create user in database
+      // TODO handle image upload
     } catch (error) {
-      const firebaseError = error as AuthEventError;
-      const errorCode = firebaseError.code;
-      const errorMessage = firebaseError.message;
-      console.error({ errorCode, errorMessage });
-
-      toastError({
-        title: t('account:register.feedbacks.registrationError.title'),
-        description: firebaseError.message,
-      });
-
-      if (errorCode === 'auth/email-already-in-use') {
-        form.invalidateFields({ email: t('account:data.email.alreadyUsed') });
-      }
+      // const firebaseError = error as AuthEventError;
+      // const errorCode = firebaseError.code;
+      // const errorMessage = firebaseError.message;
+      // console.error({ errorCode, errorMessage });
+      //
+      // toastError({
+      //   title: t('account:register.feedbacks.registrationError.title'),
+      //   description: firebaseError.message,
+      // });
+      // if (errorCode === 'auth/email-already-in-use') {
+      //   form.invalidateFields({ email: t('account:data.email.alreadyUsed') });
+      // }
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleImageUpload = async (userUid: string) => {
-    console.log('file', fileRef.current);
-    const storage = getStorage();
-    const imageRef = storageRef(storage, `users/${userUid}/avatar.jpg`);
-    // @ts-ignore
-    const uploadTask = uploadBytesResumable(imageRef, fileRef.current);
-    uploadTask.on('state_changed', handleTransfer, handleUploadFailed, () =>
-      handleUploadSucceed(uploadTask, userUid)
-    );
-  };
-
-  const handleTransfer = (snapshot: UploadTaskSnapshot) => {
-    console.log(snapshot);
-    setFileUploadProgress(
-      (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-    );
-  };
-
-  const handleUploadFailed = () => {
-    toastError({ title: 'Error', description: "Couldn't upload file" });
-  };
-
-  const handleUploadSucceed = async (task: UploadTask, userUid: string) => {
-    const downloadUrl = await getDownloadURL(task.snapshot.ref);
-    console.log(downloadUrl);
-    toastSuccess({
-      title: 'Success',
-      description: 'File uploaded successfully',
-    });
-    const userAvatarRef = ref(getDatabase(), `/users/${userUid}/avatarUrl`);
-    await set(userAvatarRef, downloadUrl);
-
-    setIsSuccess(true);
-  };
+  // const handleImageUpload = async (userUid: string) => {
+  //   // TODO
+  // };
+  //
+  // const handleTransfer = (snapshot: UploadTaskSnapshot) => {
+  //
+  // };
+  //
+  // const handleUploadFailed = () => {
+  //   toastError({ title: 'Error', description: "Couldn't upload file" });
+  // };
+  //
+  // const handleUploadSucceed = async (task: UploadTask, userUid: string) => {
+  //   // TODO handle download URL
+  //
+  //   toastSuccess({
+  //     title: 'Success',
+  //     description: 'File uploaded successfully',
+  //   });
+  //
+  //   setIsSuccess(true);
+  // };
 
   if (isSuccess) {
     return (

@@ -1,9 +1,6 @@
 import React, { useState } from 'react';
 
 import { Box, BoxProps, Button, Flex, Stack } from '@chakra-ui/react';
-import { getAuth, signInWithEmailAndPassword } from '@firebase/auth';
-import { AuthEventError } from '@firebase/auth/dist/src/model/popup_redirect';
-import { child, get, getDatabase, ref } from '@firebase/database';
 import { Formiz, useForm } from '@formiz/core';
 import { useTranslation } from 'react-i18next';
 import { Link as RouterLink } from 'react-router-dom';
@@ -27,32 +24,18 @@ export const LoginForm = ({
 
   const login = async (formValues: { email: string; password: string }) => {
     setIsLoading(true);
-    try {
-      const auth = getAuth();
-      const database = getDatabase();
-      const userCredentials = await signInWithEmailAndPassword(
-        auth,
-        formValues.email,
-        formValues.password
-      );
-      console.log(userCredentials.user);
 
-      // get user in database and set it in storage
-      const userRef = ref(database, `/users/${userCredentials.user.uid}`);
-      const userSnapshot = await get(child(userRef, '/'));
-      console.log({ userSnapshot });
-      const userInDatabase = userSnapshot.val();
-      console.log({ userInDatabase });
-      // set user in storage
-      updateUser(userInDatabase);
+    try {
+      // TODO handle login
+      // TODO get user in DB and update user in authentication provider
 
       onSuccess();
     } catch (error) {
-      const firebaseError = error as AuthEventError;
-      toastError({
-        title: t('auth:login.feedbacks.loginError.title'),
-        description: firebaseError?.message,
-      });
+      // const firebaseError = error as AuthEventError;
+      // toastError({
+      //   title: t('auth:login.feedbacks.loginError.title'),
+      //   description: firebaseError?.message,
+      // });
     } finally {
       setIsLoading(false);
     }

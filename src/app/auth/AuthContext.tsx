@@ -1,7 +1,5 @@
 import React, { FC, useCallback, useContext, useEffect, useState } from 'react';
 
-import { getAuth, onAuthStateChanged } from 'firebase/auth';
-
 import { isBrowser } from '@/utils/ssr';
 
 export type UserType = {
@@ -39,13 +37,13 @@ export const useAuthContext = () => useContext(AuthContext);
 export const AuthProvider: FC<React.PropsWithChildren<unknown>> = ({
   children,
 }) => {
-  onAuthStateChanged(getAuth(), (user) => {
-    if (user) {
-      console.log('userId', user.uid);
-    } else {
-      console.info('No user logged in');
-    }
-  });
+  // onAuthStateChanged(getAuth(), (user) => {
+  //   if (user) {
+  //     console.log('userId', user.uid);
+  //   } else {
+  //     console.info('No user logged in');
+  //   }
+  // });
 
   // TODO uncomment me to get a token
   // useEffect(() => {
