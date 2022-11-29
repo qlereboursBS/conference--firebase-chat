@@ -37,27 +37,23 @@ exports.deleteMessage = functions.database
   });
 
 exports.deleteMessageScheduling = functions.pubsub
-  .schedule('every 1 minutes')
-  .onRun((context) => {
+  .schedule('every 60 minutes')
+  .onRun(async (context) => {
     console.log('Running query to delete old messages');
     const messageRef = getDatabase().ref(`/rooms/room-1/messages/`);
     const deleteBefore = dayjs().subtract(1, 'day').valueOf();
     console.log('Will delete messages before', deleteBefore);
-    return messageRef
-      .orderByChild('createdAt')
-      .endAt(deleteBefore)
-      .once(
-        'child_added',
-        (messageSnap) => {
-          messageSnap.ref.remove((error) => {
-            if (error) {
-              console.error('error while deleting', error);
-            }
-          });
-        },
-        (error) => {
-          console.error('Error while getting messages to delete');
-          console.error(error);
-        }
-      );
+    try {
+      const messagesSnap = await messageRef
+        .orderByChild('createdAt')
+        .endAt(deleteBefore)
+        .get();
+      messagesSnap.forEach((snap) => {
+        console.log('Will delete message');
+        snap.ref.remove();
+      });
+    } catch (error) {
+      console.error('Error while getting messages to delete');
+      console.error(error);
+    }
   });

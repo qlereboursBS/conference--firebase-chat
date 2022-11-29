@@ -90,6 +90,7 @@ match /users/{userUid}/{allImages=**} {
 
 ## Extras
 1. Add a scheduled function to delete old messages. Don't forget to indexOn, while it's deploying: `".indexOn": "createdAt"`
+   1. Show that it could be done with `.once('child_added')` but explain the pricing and that it would cost a lot
 2. Deploy to Vercel
 
 ## Branches
