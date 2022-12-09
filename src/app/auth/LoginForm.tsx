@@ -4,6 +4,7 @@ import { Box, BoxProps, Button, Flex, Stack } from '@chakra-ui/react';
 import { AuthEventError } from '@firebase/auth/dist/src/model/popup_redirect';
 import { Formiz, useForm } from '@formiz/core';
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
+import { child, get, getDatabase, ref } from 'firebase/database';
 import { useTranslation } from 'react-i18next';
 import { Link as RouterLink } from 'react-router-dom';
 
@@ -38,6 +39,11 @@ export const LoginForm = ({
       console.log({ user });
 
       // TODO get user in DB and update user in authentication provider
+      const userRef = ref(getDatabase(), `/users/${user.uid}`);
+      const userSnapshot = await get(child(userRef, '/'));
+      const userInDatabase = userSnapshot.val();
+      updateUser(userInDatabase);
+
       onSuccess();
     } catch (error) {
       const firebaseError = error as AuthEventError;

@@ -16,6 +16,7 @@ import { AuthEventError } from '@firebase/auth/dist/src/model/popup_redirect';
 import { Formiz, useForm } from '@formiz/core';
 import { isEmail, isMaxLength, isMinLength } from '@formiz/validations';
 import { createUserWithEmailAndPassword, getAuth } from 'firebase/auth';
+import { getDatabase, ref, set } from 'firebase/database';
 import { Trans, useTranslation } from 'react-i18next';
 import { Link as RouterLink } from 'react-router-dom';
 
@@ -60,6 +61,14 @@ export const PageRegister = () => {
       console.log({ user, uid: user.uid });
 
       // TODO create user in database
+      const userRef = ref(getDatabase(), `/users/${user.uid}`);
+      const userInDatabase = {
+        uid: user.uid,
+        email: formValues.email,
+        username: formValues.username,
+      };
+      await set(userRef, userInDatabase);
+
       // TODO handle image upload
       setIsSuccess(true);
     } catch (error) {
