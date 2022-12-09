@@ -56,14 +56,28 @@ export const PageDashboard = () => {
     console.log('Will handle new messages s');
     setMessages({});
     const unsubscribe = handleNewMessages();
+    const unsubscribeUpdates = handleUpdatedMessages();
     return () => {
       unsubscribe();
+      unsubscribeUpdates();
     };
   }, []);
 
   const handleNewMessages = () => {
     const messagesRef = ref(getDatabase(), `/rooms/room-1/messages`);
     return onChildAdded(
+      messagesRef,
+      (messageSnap) =>
+        handleMessage(messageSnap.val() as MessageType, messageSnap.key || ''),
+      (error) => {
+        console.error(error);
+      }
+    );
+  };
+
+  const handleUpdatedMessages = () => {
+    const messagesRef = ref(getDatabase(), `/rooms/room-1/messages`);
+    return onChildChanged(
       messagesRef,
       (messageSnap) =>
         handleMessage(messageSnap.val() as MessageType, messageSnap.key || ''),

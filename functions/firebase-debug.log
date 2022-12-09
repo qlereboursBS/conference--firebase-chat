@@ -1,0 +1,115 @@
+[debug] [2022-12-09T14:09:16.023Z] ----------------------------------------------------------------------
+[debug] [2022-12-09T14:09:16.024Z] Command:       /Users/qlerebours/.nvm/versions/node/v16.18.1/bin/node /Users/qlerebours/.nvm/versions/node/v16.18.1/bin/firebase deploy --only functions
+[debug] [2022-12-09T14:09:16.024Z] CLI Version:   11.16.1
+[debug] [2022-12-09T14:09:16.024Z] Platform:      darwin
+[debug] [2022-12-09T14:09:16.024Z] Node Version:  v16.18.1
+[debug] [2022-12-09T14:09:16.025Z] Time:          Fri Dec 09 2022 20:09:16 GMT+0600 (East Kazakhstan Time)
+[debug] [2022-12-09T14:09:16.025Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2022-12-09T14:09:16.055Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2022-12-09T14:09:16.055Z] > authorizing via signed-in user (quentin.lerebours@gmail.com)
+[debug] [2022-12-09T14:09:16.056Z] [iam] checking project fir-messagingtest-9565d for permissions ["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]
+[debug] [2022-12-09T14:09:16.056Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/fir-messagingtest-9565d:testIamPermissions [none]
+[debug] [2022-12-09T14:09:16.057Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/fir-messagingtest-9565d:testIamPermissions x-goog-quota-user=projects/fir-messagingtest-9565d
+[debug] [2022-12-09T14:09:16.057Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/fir-messagingtest-9565d:testIamPermissions {"permissions":["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]}
+[debug] [2022-12-09T14:09:16.998Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/fir-messagingtest-9565d:testIamPermissions 200
+[debug] [2022-12-09T14:09:16.998Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/fir-messagingtest-9565d:testIamPermissions {"permissions":["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]}
+[debug] [2022-12-09T14:09:16.999Z] >>> [apiv2][query] POST https://iam.googleapis.com/v1/projects/fir-messagingtest-9565d/serviceAccounts/fir-messagingtest-9565d@appspot.gserviceaccount.com:testIamPermissions [none]
+[debug] [2022-12-09T14:09:16.999Z] >>> [apiv2][body] POST https://iam.googleapis.com/v1/projects/fir-messagingtest-9565d/serviceAccounts/fir-messagingtest-9565d@appspot.gserviceaccount.com:testIamPermissions {"permissions":["iam.serviceAccounts.actAs"]}
+[debug] [2022-12-09T14:09:18.074Z] <<< [apiv2][status] POST https://iam.googleapis.com/v1/projects/fir-messagingtest-9565d/serviceAccounts/fir-messagingtest-9565d@appspot.gserviceaccount.com:testIamPermissions 200
+[debug] [2022-12-09T14:09:18.074Z] <<< [apiv2][body] POST https://iam.googleapis.com/v1/projects/fir-messagingtest-9565d/serviceAccounts/fir-messagingtest-9565d@appspot.gserviceaccount.com:testIamPermissions {"permissions":["iam.serviceAccounts.actAs"]}
+[info] 
+[info] === Deploying to 'fir-messagingtest-9565d'...
+[info] 
+[info] i  deploying functions 
+[debug] [2022-12-09T14:09:18.076Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/fir-messagingtest-9565d [none]
+[debug] [2022-12-09T14:09:18.683Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/fir-messagingtest-9565d 200
+[debug] [2022-12-09T14:09:18.683Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/fir-messagingtest-9565d {"projectId":"fir-messagingtest-9565d","projectNumber":"38861134966","displayName":"FirebaseMessagingTest","name":"projects/fir-messagingtest-9565d","resources":{"hostingSite":"fir-messagingtest-9565d","realtimeDatabaseInstance":"fir-messagingtest-9565d-default-rtdb","storageBucket":"fir-messagingtest-9565d.appspot.com","locationId":"europe-west"},"state":"ACTIVE","etag":"1_00420690-daef-4b6f-9f63-9c2a185212ff"}
+[info] i  functions: ensuring required API cloudfunctions.googleapis.com is enabled... 
+[info] i  functions: ensuring required API cloudbuild.googleapis.com is enabled... 
+[info] i  artifactregistry: ensuring required API artifactregistry.googleapis.com is enabled... 
+[debug] [2022-12-09T14:09:18.685Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/fir-messagingtest-9565d/services/cloudfunctions.googleapis.com [none]
+[debug] [2022-12-09T14:09:18.685Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/fir-messagingtest-9565d/services/cloudfunctions.googleapis.com x-goog-quota-user=projects/fir-messagingtest-9565d
+[debug] [2022-12-09T14:09:18.686Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/fir-messagingtest-9565d/services/runtimeconfig.googleapis.com [none]
+[debug] [2022-12-09T14:09:18.686Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/fir-messagingtest-9565d/services/runtimeconfig.googleapis.com x-goog-quota-user=projects/fir-messagingtest-9565d
+[debug] [2022-12-09T14:09:18.686Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/fir-messagingtest-9565d/services/cloudbuild.googleapis.com [none]
+[debug] [2022-12-09T14:09:18.687Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/fir-messagingtest-9565d/services/cloudbuild.googleapis.com x-goog-quota-user=projects/fir-messagingtest-9565d
+[debug] [2022-12-09T14:09:18.687Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/fir-messagingtest-9565d/services/artifactregistry.googleapis.com [none]
+[debug] [2022-12-09T14:09:18.687Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/fir-messagingtest-9565d/services/artifactregistry.googleapis.com x-goog-quota-user=projects/fir-messagingtest-9565d
+[debug] [2022-12-09T14:09:19.926Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/fir-messagingtest-9565d/services/runtimeconfig.googleapis.com 200
+[debug] [2022-12-09T14:09:19.926Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/fir-messagingtest-9565d/services/runtimeconfig.googleapis.com [omitted]
+[debug] [2022-12-09T14:09:19.927Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/fir-messagingtest-9565d/services/artifactregistry.googleapis.com 200
+[debug] [2022-12-09T14:09:19.927Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/fir-messagingtest-9565d/services/artifactregistry.googleapis.com [omitted]
+[info] ✔  artifactregistry: required API artifactregistry.googleapis.com is enabled 
+[debug] [2022-12-09T14:09:19.928Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/fir-messagingtest-9565d/services/cloudbuild.googleapis.com 200
+[debug] [2022-12-09T14:09:19.928Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/fir-messagingtest-9565d/services/cloudbuild.googleapis.com [omitted]
+[info] ✔  functions: required API cloudbuild.googleapis.com is enabled 
+[debug] [2022-12-09T14:09:19.929Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/fir-messagingtest-9565d/services/cloudfunctions.googleapis.com 200
+[debug] [2022-12-09T14:09:19.929Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/fir-messagingtest-9565d/services/cloudfunctions.googleapis.com [omitted]
+[info] ✔  functions: required API cloudfunctions.googleapis.com is enabled 
+[debug] [2022-12-09T14:09:19.930Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/fir-messagingtest-9565d/adminSdkConfig [none]
+[debug] [2022-12-09T14:09:20.635Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/fir-messagingtest-9565d/adminSdkConfig 200
+[debug] [2022-12-09T14:09:20.635Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/fir-messagingtest-9565d/adminSdkConfig {"projectId":"fir-messagingtest-9565d","databaseURL":"https://fir-messagingtest-9565d-default-rtdb.europe-west1.firebasedatabase.app","storageBucket":"fir-messagingtest-9565d.appspot.com","locationId":"europe-west"}
+[debug] [2022-12-09T14:09:20.636Z] >>> [apiv2][query] GET https://runtimeconfig.googleapis.com/v1beta1/projects/fir-messagingtest-9565d/configs [none]
+[debug] [2022-12-09T14:09:21.865Z] <<< [apiv2][status] GET https://runtimeconfig.googleapis.com/v1beta1/projects/fir-messagingtest-9565d/configs 200
+[debug] [2022-12-09T14:09:21.865Z] <<< [apiv2][body] GET https://runtimeconfig.googleapis.com/v1beta1/projects/fir-messagingtest-9565d/configs {}
+[info] i  functions: preparing codebase default for deployment 
+[debug] [2022-12-09T14:09:21.866Z] Validating nodejs source
+[warn] ⚠  functions: package.json indicates an outdated version of firebase-functions. Please upgrade using npm install --save firebase-functions@latest in your functions directory. 
+[warn] ⚠  functions: Please note that there will be breaking changes when you upgrade. 
+[debug] [2022-12-09T14:09:23.534Z] > [functions] package.json contents: {
+  "name": "functions",
+  "description": "Cloud Functions for Firebase",
+  "scripts": {
+    "serve": "firebase emulators:start --only functions",
+    "shell": "firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "engines": {
+    "node": "16"
+  },
+  "main": "index.js",
+  "dependencies": {
+    "firebase-admin": "^10.0.2",
+    "firebase-functions": "^3.18.0"
+  },
+  "devDependencies": {
+    "firebase-functions-test": "^0.2.0"
+  },
+  "private": true
+}
+[debug] [2022-12-09T14:09:23.534Z] Building nodejs source
+[debug] [2022-12-09T14:09:23.535Z] Could not find functions.yaml. Must use http discovery
+[debug] [2022-12-09T14:09:24.012Z] Serving at port 9005
+
+[debug] [2022-12-09T14:09:24.053Z] Got response from /__/functions.yaml {"endpoints":{"deleteMessage":{"platform":"gcfv1","eventTrigger":{"eventType":"providers/google.firebase.database/eventTypes/ref.create","eventFilters":{"resource":"projects/_/instances/fir-messagingtest-9565d-default-rtdb/refs/rooms/room-1/messages/{messageId}"},"retry":false},"labels":{},"entryPoint":"deleteMessage"}},"specVersion":"v1alpha1","requiredAPIs":[]}
+[debug] [2022-12-09T14:09:24.057Z] shutdown requested via /__/quitquitquit
+
+[info] i  functions: preparing functions directory for uploading... 
+[info] i  functions: packaged /Users/qlerebours/Projects/Conferences/firebaseChat/functions (56.3 KB) for uploading 
+[debug] [2022-12-09T14:09:24.079Z] >>> [apiv2][query] GET https://cloudfunctions.googleapis.com/v1/projects/fir-messagingtest-9565d/locations/-/functions [none]
+[debug] [2022-12-09T14:09:24.930Z] <<< [apiv2][status] GET https://cloudfunctions.googleapis.com/v1/projects/fir-messagingtest-9565d/locations/-/functions 200
+[debug] [2022-12-09T14:09:24.930Z] <<< [apiv2][body] GET https://cloudfunctions.googleapis.com/v1/projects/fir-messagingtest-9565d/locations/-/functions {"functions":[{"name":"projects/fir-messagingtest-9565d/locations/us-central1/functions/deleteMessage","eventTrigger":{"eventType":"providers/google.firebase.database/eventTypes/ref.create","resource":"projects/_/instances/fir-messagingtest-9565d-default-rtdb/refs/rooms/room-1/messages/{messageId}","service":"firebaseio.com","failurePolicy":{}},"status":"ACTIVE","entryPoint":"deleteMessage","timeout":"60s","availableMemoryMb":256,"serviceAccountEmail":"fir-messagingtest-9565d@appspot.gserviceaccount.com","updateTime":"2022-11-29T21:53:54.499Z","versionId":"11","labels":{"deployment-tool":"cli-firebase","firebase-functions-hash":"39811f905047c85b1e8506a552ef99f3efd99c75"},"sourceUploadUrl":"https://storage.googleapis.com/uploads-175826094013.us-central1.cloudfunctions.appspot.com/9e024882-03fd-4144-9382-e82cd43ce010.zip","environmentVariables":{"FIREBASE_CONFIG":"{\"projectId\":\"fir-messagingtest-9565d\",\"databaseURL\":\"https://fir-messagingtest-9565d-default-rtdb.europe-west1.firebasedatabase.app\",\"storageBucket\":\"fir-messagingtest-9565d.appspot.com\",\"locationId\":\"europe-west\"}","GCLOUD_PROJECT":"fir-messagingtest-9565d","EVENTARC_CLOUD_EVENT_SOURCE":"projects/fir-messagingtest-9565d/locations/us-central1/functions/deleteMessageScheduling"},"runtime":"nodejs16","ingressSettings":"ALLOW_ALL","buildId":"ee8da17b-b06d-4a55-bf8b-5e3b7f7581d7","buildName":"projects/38861134966/locations/us-central1/builds/ee8da17b-b06d-4a55-bf8b-5e3b7f7581d7","dockerRegistry":"ARTIFACT_REGISTRY"},{"name":"projects/fir-messagingtest-9565d/locations/us-central1/functions/deleteMessageScheduling","eventTrigger":{"eventType":"google.pubsub.topic.publish","resource":"projects/fir-messagingtest-9565d/topics/firebase-schedule-deleteMessageScheduling-us-central1","service":"pubsub.googleapis.com","failurePolicy":{}},"status":"ACTIVE","entryPoint":"deleteMessageScheduling","timeout":"60s","availableMemoryMb":256,"serviceAccountEmail":"fir-messagingtest-9565d@appspot.gserviceaccount.com","updateTime":"2022-11-29T21:54:01.944Z","versionId":"3","labels":{"deployment-scheduled":"true","deployment-tool":"cli-firebase","firebase-functions-hash":"39811f905047c85b1e8506a552ef99f3efd99c75"},"sourceUploadUrl":"https://storage.googleapis.com/uploads-175826094013.us-central1.cloudfunctions.appspot.com/9e024882-03fd-4144-9382-e82cd43ce010.zip","environmentVariables":{"FIREBASE_CONFIG":"{\"projectId\":\"fir-messagingtest-9565d\",\"databaseURL\":\"https://fir-messagingtest-9565d-default-rtdb.europe-west1.firebasedatabase.app\",\"storageBucket\":\"fir-messagingtest-9565d.appspot.com\",\"locationId\":\"europe-west\"}","GCLOUD_PROJECT":"fir-messagingtest-9565d","EVENTARC_CLOUD_EVENT_SOURCE":"projects/fir-messagingtest-9565d/locations/us-central1/functions/deleteMessageScheduling"},"runtime":"nodejs16","ingressSettings":"ALLOW_ALL","buildId":"ee8da17b-b06d-4a55-bf8b-5e3b7f7581d7","buildName":"projects/38861134966/locations/us-central1/builds/ee8da17b-b06d-4a55-bf8b-5e3b7f7581d7","dockerRegistry":"ARTIFACT_REGISTRY"}]}
+[debug] [2022-12-09T14:09:24.932Z] >>> [apiv2][query] GET https://cloudfunctions.googleapis.com/v2/projects/fir-messagingtest-9565d/locations/-/functions filter=environment%3D%22GEN_2%22
+[debug] [2022-12-09T14:09:26.329Z] <<< [apiv2][status] GET https://cloudfunctions.googleapis.com/v2/projects/fir-messagingtest-9565d/locations/-/functions 200
+[debug] [2022-12-09T14:09:26.329Z] <<< [apiv2][body] GET https://cloudfunctions.googleapis.com/v2/projects/fir-messagingtest-9565d/locations/-/functions {}
+[debug] [2022-12-09T14:09:26.333Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/fir-messagingtest-9565d [none]
+[debug] [2022-12-09T14:09:27.089Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/fir-messagingtest-9565d 200
+[debug] [2022-12-09T14:09:27.089Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/fir-messagingtest-9565d {"projectId":"fir-messagingtest-9565d","projectNumber":"38861134966","displayName":"FirebaseMessagingTest","name":"projects/fir-messagingtest-9565d","resources":{"hostingSite":"fir-messagingtest-9565d","realtimeDatabaseInstance":"fir-messagingtest-9565d-default-rtdb","storageBucket":"fir-messagingtest-9565d.appspot.com","locationId":"europe-west"},"state":"ACTIVE","etag":"1_00420690-daef-4b6f-9f63-9c2a185212ff"}
+[debug] [2022-12-09T14:09:27.090Z] >>> [apiv2][query] POST https://cloudfunctions.googleapis.com/v1/projects/fir-messagingtest-9565d/locations/us-central1/functions:generateUploadUrl [none]
+[debug] [2022-12-09T14:09:27.090Z] >>> [apiv2][body] POST https://cloudfunctions.googleapis.com/v1/projects/fir-messagingtest-9565d/locations/us-central1/functions:generateUploadUrl {}
+[debug] [2022-12-09T14:09:28.111Z] <<< [apiv2][status] POST https://cloudfunctions.googleapis.com/v1/projects/fir-messagingtest-9565d/locations/us-central1/functions:generateUploadUrl 200
+[debug] [2022-12-09T14:09:28.111Z] <<< [apiv2][body] POST https://cloudfunctions.googleapis.com/v1/projects/fir-messagingtest-9565d/locations/us-central1/functions:generateUploadUrl {"uploadUrl":"https://storage.googleapis.com/uploads-175826094013.us-central1.cloudfunctions.appspot.com/6d5fdbd5-73b6-4ec1-ba0e-d54b8a479ea8.zip?GoogleAccessId=service-38861134966@gcf-admin-robot.iam.gserviceaccount.com&Expires=1670596768&Signature=naV4mPQclsVmTrCmwyryYcAn8g4%2FyQ%2BJ%2FllopUVw%2B1AZMYyJbknuPH77ogrPLaB3MZ4Imz2BTFVB9s3j0UZtA3LOLvABNISks5XUvMe4xIUMfAePZywMnnD242mVgH%2BvZ8Sr3r8Ytl0RkoT0SE3UcPThAdxboFTH3nLLEwlgu5woGchKQ2oSMmsDjLd43HAM5bt0uoao%2FJddrf3tVH0gT%2BIzNIJN%2FpEpAkOxRD%2BbVWLh5wPgB6EU%2B2cAh16mcvLcPTUFTY7%2Fz8XCKguQ2GrZbfnQrTG26Nk1BoShhWwKjs74bVev%2FSno2p5reyn07cecl66yP1BfpH0q%2ByynxtQBTg%3D%3D"}
+[debug] [2022-12-09T14:09:28.112Z] >>> [apiv2][query] PUT https://storage.googleapis.com/uploads-175826094013.us-central1.cloudfunctions.appspot.com/6d5fdbd5-73b6-4ec1-ba0e-d54b8a479ea8.zip GoogleAccessId=service-38861134966%40gcf-admin-robot.iam.gserviceaccount.com&Expires=1670596768&Signature=naV4mPQclsVmTrCmwyryYcAn8g4%2FyQ%2BJ%2FllopUVw%2B1AZMYyJbknuPH77ogrPLaB3MZ4Imz2BTFVB9s3j0UZtA3LOLvABNISks5XUvMe4xIUMfAePZywMnnD242mVgH%2BvZ8Sr3r8Ytl0RkoT0SE3UcPThAdxboFTH3nLLEwlgu5woGchKQ2oSMmsDjLd43HAM5bt0uoao%2FJddrf3tVH0gT%2BIzNIJN%2FpEpAkOxRD%2BbVWLh5wPgB6EU%2B2cAh16mcvLcPTUFTY7%2Fz8XCKguQ2GrZbfnQrTG26Nk1BoShhWwKjs74bVev%2FSno2p5reyn07cecl66yP1BfpH0q%2ByynxtQBTg%3D%3D
+[debug] [2022-12-09T14:09:28.112Z] >>> [apiv2][body] PUT https://storage.googleapis.com/uploads-175826094013.us-central1.cloudfunctions.appspot.com/6d5fdbd5-73b6-4ec1-ba0e-d54b8a479ea8.zip [stream]
+[debug] [2022-12-09T14:09:28.803Z] <<< [apiv2][status] PUT https://storage.googleapis.com/uploads-175826094013.us-central1.cloudfunctions.appspot.com/6d5fdbd5-73b6-4ec1-ba0e-d54b8a479ea8.zip 200
+[debug] [2022-12-09T14:09:28.804Z] <<< [apiv2][body] PUT https://storage.googleapis.com/uploads-175826094013.us-central1.cloudfunctions.appspot.com/6d5fdbd5-73b6-4ec1-ba0e-d54b8a479ea8.zip [omitted]
+[info] ✔  functions: functions folder uploaded successfully 
+[info] 
+The following functions are found in your project but do not exist in your local source code:
+	deleteMessageScheduling(us-central1)
+
+If you are renaming a function or changing its region, it is recommended that you create the new function first before deleting the old one to prevent event loss. For more info, visit https://firebase.google.com/docs/functions/manage-functions#modify
+
