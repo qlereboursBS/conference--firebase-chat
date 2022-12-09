@@ -7,6 +7,7 @@
 3. Show Firebase menus and features around 
 4. Create the Database (before saving the configuration!)
 5. Checkout to the `conf/start` branch containing the updated StartUI repo, without firebase code
+6. Install firebase using `yarn add firebase@9.14.0`
 
 ## User authentication
 
