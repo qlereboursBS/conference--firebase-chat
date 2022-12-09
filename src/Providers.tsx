@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 
 import { AuthProvider } from '@/app/auth/AuthContext';
 import '@/config';
+import '@/constants/firebase';
 import theme from '@/theme';
 
 import { AVAILABLE_LANGUAGES } from './constants/i18n';

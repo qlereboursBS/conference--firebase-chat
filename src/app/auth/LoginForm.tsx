@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 
 import { Box, BoxProps, Button, Flex, Stack } from '@chakra-ui/react';
+import { AuthEventError } from '@firebase/auth/dist/src/model/popup_redirect';
 import { Formiz, useForm } from '@formiz/core';
+import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 import { useTranslation } from 'react-i18next';
 import { Link as RouterLink } from 'react-router-dom';
 
@@ -27,15 +29,22 @@ export const LoginForm = ({
 
     try {
       // TODO handle login
-      // TODO get user in DB and update user in authentication provider
+      const userCredential = await signInWithEmailAndPassword(
+        getAuth(),
+        formValues.email,
+        formValues.password
+      );
+      const user = userCredential.user;
+      console.log({ user });
 
+      // TODO get user in DB and update user in authentication provider
       onSuccess();
     } catch (error) {
-      // const firebaseError = error as AuthEventError;
-      // toastError({
-      //   title: t('auth:login.feedbacks.loginError.title'),
-      //   description: firebaseError?.message,
-      // });
+      const firebaseError = error as AuthEventError;
+      toastError({
+        title: t('auth:login.feedbacks.loginError.title'),
+        description: firebaseError?.message,
+      });
     } finally {
       setIsLoading(false);
     }

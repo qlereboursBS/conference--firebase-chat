@@ -12,8 +12,10 @@ import {
   ScaleFade,
   Stack,
 } from '@chakra-ui/react';
+import { AuthEventError } from '@firebase/auth/dist/src/model/popup_redirect';
 import { Formiz, useForm } from '@formiz/core';
 import { isEmail, isMaxLength, isMinLength } from '@formiz/validations';
+import { createUserWithEmailAndPassword, getAuth } from 'firebase/auth';
 import { Trans, useTranslation } from 'react-i18next';
 import { Link as RouterLink } from 'react-router-dom';
 
@@ -48,22 +50,31 @@ export const PageRegister = () => {
   }) => {
     setIsLoading(true);
     try {
-      // TODO create user in authentication system
+      // create user in authentication system
+      const userCredential = await createUserWithEmailAndPassword(
+        getAuth(),
+        formValues.email,
+        formValues.password
+      );
+      const user = userCredential.user;
+      console.log({ user, uid: user.uid });
+
       // TODO create user in database
       // TODO handle image upload
+      setIsSuccess(true);
     } catch (error) {
-      // const firebaseError = error as AuthEventError;
-      // const errorCode = firebaseError.code;
-      // const errorMessage = firebaseError.message;
-      // console.error({ errorCode, errorMessage });
-      //
-      // toastError({
-      //   title: t('account:register.feedbacks.registrationError.title'),
-      //   description: firebaseError.message,
-      // });
-      // if (errorCode === 'auth/email-already-in-use') {
-      //   form.invalidateFields({ email: t('account:data.email.alreadyUsed') });
-      // }
+      const firebaseError = error as AuthEventError;
+      const errorCode = firebaseError.code;
+      const errorMessage = firebaseError.message;
+      console.error({ errorCode, errorMessage });
+
+      toastError({
+        title: t('account:register.feedbacks.registrationError.title'),
+        description: firebaseError.message,
+      });
+      if (errorCode === 'auth/email-already-in-use') {
+        form.invalidateFields({ email: t('account:data.email.alreadyUsed') });
+      }
     } finally {
       setIsLoading(false);
     }
