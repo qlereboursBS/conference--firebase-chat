@@ -96,7 +96,12 @@ match /users/{userUid}/{allImages=**} {
 ## Branches
  - `main` contains the app with all the features
  - `conf/start` is the app without the firebase code
- - 
+ - `conf/setup-and-auth` contains the app with the firebase setup and authentication (without writing to database)
+ - `conf/user-in-db` has the code that creates the user in database
+ - `conf/avatar` uploads the user avatar in storage
+ - `conf/chat` enable chat functionalities (join room, send message, handle new message, handle new user)
+ - `conf/admin-function` add the function to delete insults
+ - `conf/scheduled-function` add the function to delete old messages
 
 <h1 align="center"><img src="assets/start-ui-web.svg" alt="Start UI Web" width="300" /></h1>
 
