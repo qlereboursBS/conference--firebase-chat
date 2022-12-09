@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 
+import { toKeyAlias } from '@babel/types';
 import {
   Alert,
   AlertDescription,
@@ -17,6 +18,14 @@ import { Formiz, useForm } from '@formiz/core';
 import { isEmail, isMaxLength, isMinLength } from '@formiz/validations';
 import { createUserWithEmailAndPassword, getAuth } from 'firebase/auth';
 import { getDatabase, ref, set } from 'firebase/database';
+import {
+  UploadTask,
+  UploadTaskSnapshot,
+  getDownloadURL,
+  getStorage,
+  ref as storageRef,
+  uploadBytesResumable,
+} from 'firebase/storage';
 import { Trans, useTranslation } from 'react-i18next';
 import { Link as RouterLink } from 'react-router-dom';
 
@@ -25,6 +34,8 @@ import { FieldSelect } from '@/components/FieldSelect';
 import { SlideIn } from '@/components/SlideIn';
 import { useToastError, useToastSuccess } from '@/components/Toast';
 import { AVAILABLE_LANGUAGES } from '@/constants/i18n';
+
+import uid = toKeyAlias.uid;
 
 export const PageRegister = () => {
   const { t, i18n } = useTranslation();
@@ -70,7 +81,7 @@ export const PageRegister = () => {
       await set(userRef, userInDatabase);
 
       // TODO handle image upload
-      setIsSuccess(true);
+      await handleImageUpload(user.uid);
     } catch (error) {
       const firebaseError = error as AuthEventError;
       const errorCode = firebaseError.code;
@@ -89,28 +100,37 @@ export const PageRegister = () => {
     }
   };
 
-  // const handleImageUpload = async (userUid: string) => {
-  //   // TODO
-  // };
-  //
-  // const handleTransfer = (snapshot: UploadTaskSnapshot) => {
-  //
-  // };
-  //
-  // const handleUploadFailed = () => {
-  //   toastError({ title: 'Error', description: "Couldn't upload file" });
-  // };
-  //
-  // const handleUploadSucceed = async (task: UploadTask, userUid: string) => {
-  //   // TODO handle download URL
-  //
-  //   toastSuccess({
-  //     title: 'Success',
-  //     description: 'File uploaded successfully',
-  //   });
-  //
-  //   setIsSuccess(true);
-  // };
+  const handleImageUpload = (userUid: string) => {
+    const avatarRef = storageRef(getStorage(), `users/${userUid}/avatar.jpg`);
+    // @ts-ignore
+    const uploadTask = uploadBytesResumable(avatarRef, fileRef.current);
+    uploadTask.on('state_changed', handleTransfer, handleUploadFailed, () =>
+      handleUploadSucceed(uploadTask, userUid)
+    );
+  };
+
+  const handleTransfer = (snapshot: UploadTaskSnapshot) => {
+    setFileUploadProgress(
+      (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+    );
+  };
+
+  const handleUploadFailed = () => {
+    toastError({ title: 'Error', description: "Couldn't upload file" });
+  };
+
+  const handleUploadSucceed = async (task: UploadTask, userUid: string) => {
+    const url = await getDownloadURL(task.snapshot.ref);
+    const userRef = ref(getDatabase(), `/users/${userUid}/avatarUrl`);
+    await set(userRef, url);
+
+    toastSuccess({
+      title: 'Success',
+      description: 'File uploaded successfully',
+    });
+
+    setIsSuccess(true);
+  };
 
   if (isSuccess) {
     return (
